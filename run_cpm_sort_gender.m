@@ -1,43 +1,57 @@
-%% Written by Suyeon Ju, 1.25.22
+%% Written by Suyeon Ju, 1.25.22, updated 4.1.22
 % This script will take in the following inputs to run CPM:
-% 
+
 % Inputs: 
-%   subj_list_all = cell array of .txt file names of all lists of subject IDs 
+%   `subj_list_all` = cell array of .txt file names of all lists of subject IDs 
 %       (should be file name of .txt file that has list of all subject IDs ['HCA#######'])
 %       i.e., "{'all_subjs_ravlt_hcp-a_2.txt', 'all_subjs_pcps_hcp-a_2.txt', 'all_subjs_nffi_hcp-a_2.txt'}"
-%   behav_param_list = cell array of behavioral parameters to be tested
+%   `behav_param_list` = cell array of behavioral parameters to be tested
 %       i.e., "{'ravlt','pcps','nffi'}"
-%   scan_type_list = cell array containing one or more of the following: 
+%   `scan_type_list` = cell array containing one or more of the following: 
 %       'rfMRI_REST1_AP', 'rfMRI_REST1_PA', 'rfMRI_REST2_AP', 'rfMRI_REST2_PA',
 %       'tfMRI_CARIT', 'tfMRI_FACENAME', 'tfMRI_VISMOTOR'
 %       i.e., "{'tfMRI_CARIT', 'tfMRI_FACENAME', 'tfMRI_VISMOTOR'}"
-% 
+ 
 % Example command line:
-% >> run_cpm_sort_gender({'all_subjs_ravlt_hcp-a_2.txt', 'all_subjs_pcps_hcp-a_2.txt', 'all_subjs_nffi_hcp-a_2.txt'}, {'ravlt', 'pcps', 'nffi'},{'tfMRI_CARIT', 'tfMRI_FACENAME', 'tfMRI_VISMOTOR'})
+% >> run_cpm_sort_gender({'all_subjs_ravlt_hcp-a_2.txt', 'all_subjs_pcps_hcp-a_2.txt', 'all_subjs_nffi_hcp-a_2.txt'}, {'ravlt', 'pcps', 'nffi'}, {'tfMRI_CARIT', 'tfMRI_FACENAME', 'tfMRI_VISMOTOR'})
 
-%% Pseudocode ***** UPDATE *****
+% Outputs:
+%   `all_results_m` = cell array holding all male subjects' CPM results (`behav_param`, `scan_type`, `behav_scores_m`, `y_hat_m`, `corr_m`)
+%   `all_results_f` = cell array holding all female subjects' CPM results (`behav_param`, `scan_type`, `behav_scores_f`, `y_hat_f`, `corr_f`)
+%   For now, the code just prints the contents of the `all_results` cell arrays and 
+%       resulting correlations between actual and predicted y (R and p value, for both male and female predictive models), 
+%       but I will revise the code later to collect and save all CPM outputs (`y_predict` and `performance`)
 
-% step 1: create string array with all subj IDs from subj_list
-% 
+%% Pseudocode
+
+% NOTE: All of the following steps are within a nested for-loop to allow for 
+%   batch parameter runs (outer loop = loops through list of selected behavioral parameters; 
+%   inner loop = loops through list of scan types)
+
+% step 1: create string array with all subj IDs from `subj_list_all`
+%
 % step 2: create for loop where:
-%   - iterative variable = all subj IDs
-%   - conn_mat_single matrix variable = connectivity matrix for each subj ID for
-%       specified scan_type; each conn_mat_single matrix is added in 3rd
-%       dimension to conn_mat (which holds all conn mats across all subjs)
-%   - collect subj IDs of all subjs in conn_mat (conn_subj_array)
-% 
-% step 3: create matrix listing all subj IDs in conn_subj_array (in col 1),
-%   corresponding behavioral parameter data pulled from behav_param (in col
-%   2), and corresponding gender of each subj (in col 3)
-% 
-% step 4: call cpm_main function from constable's CPM matlab code
+%   iterative variable = all subj IDs
+%   `conn_mat_single` = connectivity matrix for each subj ID for specified scan_type; each conn_mat_single matrix is added in 3rd dimension to `conn_mat` (holds all conn mats across all subjs)
+%   `conn_mat` = compilation of all conn mats across all subjs
+%   `conn_subj_array` = collect subj IDs of all subjs in `conn_mat`
+%
+% step 3: create separate cell arrays for male (`behav_scores_m`) and female (`behav_scores_f`) subjects that collect:
+%   -all subj IDs in `conn_subj_array` (in col 1)
+%   -corresponding behavioral parameter data pulled from `behav_param` (in col 2)
+%   -corresponding gender of each subj (in col 3)
+%   -corresponding connectivity matrix for each subj (in col 4)
+%
+% step 4: extract male (`conn_mat_m`) and female (`conn_mat_f`) connectivity matrices from the `behav_scores` cell arrays (for ease of inputting the matrices into CPM in step 5)
+%
+% step 5: call `cpm_main` function from constable's CPM matlab code separately for each gender (generates predictive model and outputs results for each gender separately!)
 
 %% Implementation
 
 function run_cpm_sort_gender(subj_list_all, behav_param_list, scan_type_list)
 
-all_results_m = {};
-all_results_f = {};
+all_results_m = {}; % holds all male subjects' CPM results (behav_param, scan_type, behav_scores_m, y_hat_m, corr_m)
+all_results_f = {}; % holds all female subjects' CPM results (behav_param, scan_type, behav_scores_f, y_hat_f, corr_f)
 
 for bp = 1:length(behav_param_list)
     behav_param = behav_param_list{bp};
@@ -144,7 +158,8 @@ for bp = 1:length(behav_param_list)
 
         behav_scores_m = behav_scores_m(~cellfun(@isempty, behav_scores_m(:,1)), :);
         behav_scores_f = behav_scores_f(~cellfun(@isempty, behav_scores_f(:,1)), :);
-
+    
+    % step 4:
         conn_mat_m = [];
         conn_mat_f = [];
 
@@ -156,7 +171,7 @@ for bp = 1:length(behav_param_list)
             conn_mat_f = cat(3, conn_mat_f, behav_scores_f{j,4});
         end
 
-    % step 4:
+    % step 5:
         cd ../../CPM/matlab/func/
 
         [y_hat_m,corr_m] = cpm_main(conn_mat_m, cell2mat(behav_scores_m(:,2)'));

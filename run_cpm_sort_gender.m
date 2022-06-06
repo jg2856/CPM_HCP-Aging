@@ -44,7 +44,7 @@
 %
 % step 4: extract male (`conn_mat_m`) and female (`conn_mat_f`) connectivity matrices from the `behav_scores` cell arrays (for ease of inputting the matrices into CPM in step 5)
 %
-% step 5: call `cpm_main` function from constable's CPM matlab code separately for each gender (generates predictive model and outputs results for each gender separately!)
+% step 5: call `cpm_main` function from MRRC's CPM matlab code separately for each gender (generates predictive model and outputs results for each gender separately!)
 
 %% Implementation
 

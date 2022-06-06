@@ -1,10 +1,8 @@
-%% Written by Suyeon Ju, 5.2.22
+%% Written by Suyeon Ju, 6.6.22
 
 %% general script info
 
 % inputs:
-%   %% NO LONGER A THING!!! `subj_list` = string of excel spreadsheet file name with all subj IDs 
-%       i.e., for Suyeon's project: "HCP-A_cpm_project_exclusion_criteria.xlsx"
 %   `param_list` = cell array of parameters to be tested
 %       i.e., "{'ravlt','pcps','nffi'}"
 %   `scan_type_list` = cell array containing one or more of the following: 

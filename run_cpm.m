@@ -80,9 +80,11 @@ for param = 1:length(param_list)
         opts.DataLines = 3;
         opts.VariableNamesLine = 1;
         ravlt_data = readtable('/data23/mri_group/an_data/HCP-A2.0/behavioralData/ravlt01.txt',opts);
+        param_data = NaN(length(pt),1);
         for i = 1:length(pt)
             param_data(i) = ravlt_data{strcmp(ravlt_data.src_subject_id, pt(i)),'pea_ravlt_sd_tc'}; % RAVLT Short Delay Total Correct
         end
+%         disp(param_data)
     end
     if strcmp(param_list{param},'neon')
         pt = all_param_pt.neon(1:579,:);
@@ -90,6 +92,7 @@ for param = 1:length(param_list)
         opts.DataLines = 3;
         opts.VariableNamesLine = 1;
         neon_data = readtable('/data23/mri_group/an_data/HCP-A2.0/behavioralData/nffi01.txt',opts);
+        param_data = NaN(length(pt),1);
         for i = 1:length(pt)
             param_data(i) = neon_data{strcmp(neon_data.src_subject_id, pt(i)),'neo2_score_ne'}; % Neuroticism score
         end
@@ -130,81 +133,47 @@ for param = 1:length(param_list)
         end
         %% CONN_MAT STRUCT POPULATION
         conn_mat_struct(st) = struct('scan_type',scan_type_list(st),'conn_mat', conn_mat);
+        
+    end
+
+    %% CODE TO RUN CPM!!! ***
+    
+    %% CPM_OUTPUT STRUCT SETUP
+    % initialize structs with all cpm outputs(y_hat and corr) for each 
+    %   scan type (y_hat_struct and corr_struct)
+    
+    y_hat_struct(length(scan_type_list)) = struct('scan_type',[],'y_hat',[]);
+    corr_struct(length(scan_type_list)) = struct('scan_type',[],'corr',[]);
+    randinds_struct(length(scan_type_list)) = struct('scan_type',[],'randinds',[]);
+    pmask_struct(length(scan_type_list)) = struct('scan_type',[],'pmask',[]);
+    
+    for st = 1:length(scan_type_list)
+        cd '/data23/mri_researchers/fredericks_data/shared/hcp_aging_analyses/hcp-a_cpm/CPM_HCP-Aging/'
+        
+        %% run cpm here!! 
+%         [y_hat_output,corr_output,randinds_output,pmask_output] = cpm_main(conn_mat_struct(st).conn_mat,param_data','pthresh',0.01,'kfolds',5);
+        [y_hat_output,corr_output,randinds_output,pmask_output] = cpm_main(conn_mat_struct(st).conn_mat, param_data');
+        
+        y_hat_struct(st) = struct('scan_type',scan_type_list(st),'y_hat',y_hat_output);
+        corr_struct(st) = struct('scan_type',scan_type_list(st),'corr',corr_output);
+        randinds_struct(st) = struct('scan_type',scan_type_list(st),'randinds',randinds_output);
+        pmask_struct(st) = struct('scan_type',scan_type_list(st),'pmask',pmask_output);
     end
     
-     %% CHECK SCRIPT!!!
-%     disp('CHECK!!')
-%     class(param_data)
-%     disp(size(conn_mat))
-%     disp(pt_struct)
-%     disp(conn_mat_struct)
-%     disp('check end')
+    % create cpm_output struct to hold both y_hat_struct and corr_struct
+    cpm_output = struct('y_hat_struct',y_hat_struct,'corr_struct',corr_struct,'randinds_struct',randinds_struct, 'pmask_struct',pmask_struct);
     
-%     %% CODE TO RUN CPM!!! ***
-%     
-%     %% CPM_OUTPUT STRUCT SETUP
-%     % initialize structs with all cpm outputs(y_hat and corr) for each 
-%     %   scan type (y_hat_struct and corr_struct)
-%     
-%     y_hat_struct(length(scan_type_list)) = struct('scan_type',[],'y_hat',[]);
-%     corr_struct(length(scan_type_list)) = struct('scan_type',[],'corr',[]);
-%     randinds_struct(length(scan_type_list)) = struct('scan_type',[],'randinds',[]);
-%     pmask_struct(length(scan_type_list)) = struct('scan_type',[],'pmask',[]);
-%     
-% %     y_hat_all = [];
-% %     corr_all = [];
-% %     randinds_all = [];
-% %     pmask_all = [];
-%     
-%     for st = 1:length(scan_type_list)
-%         cd '/data23/mri_researchers/fredericks_data/shared/hcp_aging_analyses/hcp-a_cpm/CPM_HCP-Aging/'
-%         
-% %         y_hat_struct.scan_type = scan_type_list(st);
-% %         corr_struct.scan_type = scan_type_list(st);
-% %         randinds_struct.scan_type = scan_type_list(st);
-% %         pmask_struct.scan_type = scan_type_list(st);
-%         
-%         %% run cpm here!! *** MAKE SURE TO CHECK COREY'S NEW VERSION OF CPM!!!
-%         disp('see if conn_mat exits/what it is!')
-%         class(conn_mat_struct(st))
-%         
-%         [y_hat_output,corr_output,randinds_output,pmask_output] = cpm_main(conn_mat_struct(st),param_data);
-%         
-%         y_hat_struct(st) = struct('scan_type',scan_type_list(st),'y_hat',y_hat_output);
-%         corr_struct(st) = struct('scan_type',scan_type_list(st),'corr',corr_output);
-%         randinds_struct(st) = struct('scan_type',scan_type_list(st),'randinds',randinds_output);
-%         pmask_struct(st) = struct('scan_type',scan_type_list(st),'pmask',pmask_output);
-%         
-%         
-% %         y_hat_all = cat(3,y_hat_all,y_hat_output);
-% %         corr_all = cat(3,corr_all,corr_output);
-% %         randinds_all = cat(3,randinds_all,randinds_output);
-% %         pmask_all = cat(3,pmask_all,pmask_output);
-%         
-%     end
-%     
-% %     y_hat_struct.y_hat = y_hat_all;
-% %     corr_struct.corr = corr_all;
-% %     randinds_struct.randinds = randinds_all;
-% %     pmask_struct.pmask = pmask_all;
-%     
-%     % create cpm_output struct to hold both y_hat_struct and corr_struct
-%     cpm_output = struct('y_hat_struct',y_hat_struct,'corr_struct',corr_struct,'randinds_struct',randinds_struct, 'pmask_struct',pmask_struct);
-%     
-%     %% CHECK SCRIPT!!!
-%     disp('CHECK!!')
-%     disp(y_hat_struct)
-%     disp(corr_struct)
-%     disp(randinds_struct)
-%     disp(pmask_struct)
-%     disp(cpm_output)
-%     disp('check end')
-% end
+    %% CHECK SCRIPT!!!
+    disp('CHECK!!')
+    disp(y_hat_struct)
+    disp(corr_struct)
+    disp(randinds_struct)
+    disp(pmask_struct)
+    disp(cpm_output)
+    disp('check end')
+end
 
-% save('test.mat', 'pt_struct', 'conn_mat_struct','Variablename', '-v7.3')
 toc;
 
 cd '/data23/mri_researchers/fredericks_data/shared/hcp_aging_analyses/hcp-a_cpm/CPM_HCP-Aging/'
-save('pt_struct_test.mat', 'pt_struct')
-save('conn_mat_struct_test.mat','-struct', 'conn_mat_struct','conn_mat')
 end

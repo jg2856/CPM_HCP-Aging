@@ -22,7 +22,6 @@ parse(p,x,y,pthresh,kfolds,varargin{:});
 corrtype=p.Results.corrtype;
 z=p.Results.z;
 
-
 clearvars p
 
 
@@ -54,9 +53,6 @@ for leftout = 1:kfolds
     y_train = y(traininds);
     x_test = x(:,testinds);
     y_test(leftout,1:nsubs_in_fold) = y(testinds);
-    
-   
-    
     
     z_train=z(traininds);
     

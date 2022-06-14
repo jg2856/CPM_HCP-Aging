@@ -1,4 +1,4 @@
-function [y_predict, randinds, pmask_hold]=cpm_cv(x,y,pthresh,kfolds)
+function [y_predict]=cpm_cv(x,y,pthresh,kfolds)
 % Runs cross validation for CPM
 % x            Predictor variable
 % y            Outcome variable
@@ -36,8 +36,6 @@ for leftout = 1:kfolds
     
     % Train Connectome-based Predictive Model
     [~, ~, pmask, mdl] = cpm_train(x_train, y_train,pthresh);
-    
-    pmask_hold(:,leftout) = pmask;
     
     % Test Connectome-based Predictive Model
     [y_predict(testinds)] = cpm_test(x_test,mdl,pmask);

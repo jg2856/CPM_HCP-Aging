@@ -84,7 +84,6 @@ for param = 1:length(param_list)
         for i = 1:length(pt)
             param_data(i) = ravlt_data{strcmp(ravlt_data.src_subject_id, pt(i)),'pea_ravlt_sd_tc'}; % RAVLT Short Delay Total Correct
         end
-%         disp(param_data)
     end
     if strcmp(param_list{param},'neon')
         pt = all_param_pt.neon(1:579,:);
@@ -151,8 +150,8 @@ for param = 1:length(param_list)
         cd '/data23/mri_researchers/fredericks_data/shared/hcp_aging_analyses/hcp-a_cpm/CPM_HCP-Aging/'
         
         %% run cpm here!! 
-%         [y_hat_output,corr_output,randinds_output,pmask_output] = cpm_main(conn_mat_struct(st).conn_mat,param_data','pthresh',0.01,'kfolds',5);
-        [y_hat_output,corr_output,randinds_output,pmask_output] = cpm_main(conn_mat_struct(st).conn_mat, param_data');
+        [y_hat_output,corr_output,randinds_output,pmask_output] = cpm_main(conn_mat_struct(st).conn_mat,param_data','pthresh',0.01,'kfolds',5);
+%         [y_hat_output,corr_output] = cpm_main(conn_mat_struct(st).conn_mat, param_data');
         
         y_hat_struct(st) = struct('scan_type',scan_type_list(st),'y_hat',y_hat_output);
         corr_struct(st) = struct('scan_type',scan_type_list(st),'corr',corr_output);
@@ -162,6 +161,7 @@ for param = 1:length(param_list)
     
     % create cpm_output struct to hold both y_hat_struct and corr_struct
     cpm_output = struct('y_hat_struct',y_hat_struct,'corr_struct',corr_struct,'randinds_struct',randinds_struct, 'pmask_struct',pmask_struct);
+%     cpm_output = struct('y_hat_struct',y_hat_struct,'corr_struct',corr_struct);
     
     %% CHECK SCRIPT!!!
     disp('CHECK!!')
@@ -172,6 +172,8 @@ for param = 1:length(param_list)
     disp(cpm_output)
     disp('check end')
 end
+
+save('cpm_output.mat', 'cpm_output')
 
 toc;
 

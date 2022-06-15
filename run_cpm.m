@@ -10,45 +10,10 @@
 %       'tfMRI_CARIT', 'tfMRI_FACENAME', 'tfMRI_VISMOTOR'
 %       i.e., "{'rfMRI_REST1_AP', 'tfMRI_CARIT', 'tfMRI_FACENAME', 'tfMRI_VISMOTOR'}"
 
-% example command line:
-% >> run_cpm({'ravlt', 'pcps', 'neon'}, 
-%            {'tfMRI_CARIT', 'tfMRI_FACENAME', 'tfMRI_VISMOTOR'})
+% example command line: *** JUST RUN ONE PARAMETER AT A TIME FOR NOW!!! - because cpm_output.mat save command can only hold structs for one param at the moment!
+% >> run_cpm({'ravlt'},{'rfMRI_REST1_AP', 'rfMRI_REST1_PA', 'rfMRI_REST2_AP', 'rfMRI_REST2_PA','tfMRI_CARIT', 'tfMRI_FACENAME', 'tfMRI_VISMOTOR'})
 
 % Outputs:
-% For now, the code just prints the resulting correlation between actual 
-%   and predicted y (R and p value), but I will revise the code later to 
-%   collect all CPM outputs (`y_predict` and `performance`)
-% 5.2.22 - currently trying to incorporate structs so we can easily save
-%   and review our run results later!
-
-%% Pseudocode {NEED TO UPDATE: ASSUME THAT NONE OF THE FOLLOWING IS ACCURATE}
-
-% step 1: create string array with necessary subj IDs from `subj_list`
-%   - necessity determined by which parameter is being tested
-%
-% step 2: create for loop to set up initial struct ('pt') collect the 
-% following info for each PT in above struct:
-%   - PT ID
-%   - age
-%   - sex (at birth)
-%   - conn_mat = cell array with two columns:
-%       - scan type
-%       - connectivity matrix
-%
-% step 3: set up struct ('cpm_output_run') to collect info for each run
-%   (*** figure out if this should be runs using the same predictive model,
-%   or remakes of the same model! - esp since corey said to do 1000 runs...)
-%   - PT ID
-%   - age
-%   - sex (at birth)
-%   - scan type
-%   - y (PT score for input parameter)
-%   - y_hat (predicted PT score)
-%   - corr (Pearson R and p values for correlation between y and y_hat)
-%
-% step 4: call `cpm_main` function from MRRC's CPM matlab code using
-%   elements from above struct (pt) and store results in the new struct
-%   (cpm_output_run)
 
 %% Implementation
 
@@ -102,8 +67,7 @@ for param = 1:length(param_list)
     pt_struct(length(pt)) = struct('pt_id',[],'age',[],'sex',[],'y',[]);
     
     %% CONN_MAT STRUCT SETUP
-    % initialize struct with all conn_mats (n x m x n_subs) for each scan
-    %   type in scan_type_list (conn_mat_struct)
+    % initialize struct with all conn_mats (n x m x n_subs) for each scan type in scan_type_list (conn_mat_struct)
     conn_mat_struct(length(scan_type_list)) = struct('scan_type',[],'conn_mat',[]);
     
     for st = 1:length(scan_type_list)
@@ -118,8 +82,7 @@ for param = 1:length(param_list)
                 conn_mat_single = load(CM_filename);
                 conn_mat = cat(3,conn_mat,conn_mat_single);
             catch
-                % might be able to get rid of this try catch thing and just
-                % have the contents of the 'try' instead!
+                % might be able to get rid of this try catch thing and just have the contents of the 'try' instead!
                 disp('ERROR - conn mat not found:')
                 disp(pt(sub))
                 disp(scan_type)
@@ -151,7 +114,6 @@ for param = 1:length(param_list)
         
         %% run cpm here!! 
         [y_hat_output,corr_output,randinds_output,pmask_output] = cpm_main(conn_mat_struct(st).conn_mat,param_data','pthresh',0.01,'kfolds',5);
-%         [y_hat_output,corr_output] = cpm_main(conn_mat_struct(st).conn_mat, param_data');
         
         y_hat_struct(st) = struct('scan_type',scan_type_list(st),'y_hat',y_hat_output);
         corr_struct(st) = struct('scan_type',scan_type_list(st),'corr',corr_output);
@@ -161,7 +123,6 @@ for param = 1:length(param_list)
     
     % create cpm_output struct to hold both y_hat_struct and corr_struct
     cpm_output = struct('y_hat_struct',y_hat_struct,'corr_struct',corr_struct,'randinds_struct',randinds_struct, 'pmask_struct',pmask_struct);
-%     cpm_output = struct('y_hat_struct',y_hat_struct,'corr_struct',corr_struct);
     
     %% CHECK SCRIPT!!!
     disp('CHECK!!')

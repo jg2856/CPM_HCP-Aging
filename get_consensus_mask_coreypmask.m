@@ -1,11 +1,19 @@
-function [MxM_matrix_pos,MxM_matrix_neg,size_of_pos_mask,size_of_neg_mask] = get_consensus_mask(pmask_stock,scan_to_use,thresholder_to_use)
+function [MxM_matrix_pos,MxM_matrix_neg,size_of_pos_mask,size_of_neg_mask] = get_consensus_mask_coreypmask(pmask_stock,scan_to_use,thresholder_to_use)
+% function get_consensus_mask_Suyeon_version(pmask_stock,scan_to_use,thresholder_to_use)
 %fxn to get consensus mask
 
-for mm = 1:size(pmask_stock,1)
+% size(pmask_stock)
 
-tester = pmask_stock(:,:,:,mm);
+for mm = 1:size(pmask_stock,4)
+    disp(mm)
 
-tmp(mm,:,:) = squeeze(tester(1,:,:)); %note, pulling out 1 here means I am using the 0.05 threshold 
+    tester = pmask_stock(:,:,:,mm);
+    disp('tester')
+    size(tester)
+
+    tmp(mm,:,:) = squeeze(tester(1,:,:)); %note, pulling out 1 here means I am using the 0.05 threshold 
+    disp('tmp')
+    size(tmp)
 end
 
 thresholder = thresholder_to_use;
@@ -16,6 +24,8 @@ k = scan_to_use;
     
 pmask_tmp = tmp(k,:,:);
 pmask = squeeze(pmask_tmp);
+disp('pmask')
+size(pmask)
 
 pmask_pos = pmask;
 pmask_pos(pmask_pos==-1) = 0;
@@ -32,6 +42,8 @@ pmask_neg(pmask_neg==1) = 0;
 
 sum_pos = sum(pmask_pos,2);
 sum_neg = sum(pmask_neg,2);
+disp('sum_pos')
+size(sum_pos)
 
 sum_pos(sum_pos < ( size(pmask,2)* thresholder)) = 0;
 sum_neg(sum_neg > ( size(pmask,2)* thresholder)) = 0;
@@ -41,11 +53,15 @@ sum_neg(sum_neg > ( size(pmask,2)* thresholder)) = 0;
 
 sum_pos = +(sum_pos ~= 0);
 sum_neg = +(sum_neg ~= 0);
+disp('sum_pos')
+size(sum_pos)
+
 
 %these are the sizes of edges that show up in every cross iteration loop
 size_of_pos_mask = length(find(sum_pos));
 size_of_neg_mask = length(find(sum_neg));
-
+disp('size_of_pos_mask')
+size(size_of_pos_mask)
 
 
 %haven't touched this yet
@@ -64,8 +80,11 @@ edge_vector_matrix_neg = zeros(no_node, no_node);
 
 edge_vector_matrix_pos(upp_id) = sum_pos;
 edge_vector_matrix_pos = edge_vector_matrix_pos + edge_vector_matrix_pos';
+disp('edge_vector_matrix_pos')
+size(edge_vector_matrix_pos)
 MxM_matrix_pos =edge_vector_matrix_pos;
-
+disp('MxM_matrix_pos')
+size(MxM_matrix_pos)
 
 edge_vector_matrix_neg(upp_id) = sum_neg;
 edge_vector_matrix_neg = edge_vector_matrix_neg + edge_vector_matrix_neg';

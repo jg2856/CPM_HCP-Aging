@@ -39,6 +39,11 @@ for leftout = 1:kfolds
     
     pmask_hold(:,leftout) = pmask;
     
+    disp(leftout)
+    size(pmask)
+    size(pmask_hold)
+    
+    
     % Test Connectome-based Predictive Model
     [y_predict(testinds)] = cpm_test(x_test,mdl,pmask);
 end

@@ -55,11 +55,6 @@ edge_vector_matrix_neg = zeros(no_node, no_node);
 
 %now need to put idx_pos into 35,778 vector
 
-% just try this out!!!
-edge_vector_matrix_combined(upp_id) = sum_combined;
-edge_vector_matrix_combined = edge_vector_matrix_combined + edge_vector_matrix_combined';
-MxM_matrix_combined = edge_vector_matrix_combined;
-
 edge_vector_matrix_pos(upp_id) = sum_pos;
 edge_vector_matrix_pos = edge_vector_matrix_pos + edge_vector_matrix_pos';
 MxM_matrix_pos = edge_vector_matrix_pos;
@@ -67,7 +62,8 @@ MxM_matrix_pos = edge_vector_matrix_pos;
 edge_vector_matrix_neg(upp_id) = sum_neg;
 edge_vector_matrix_neg = edge_vector_matrix_neg + edge_vector_matrix_neg';
 MxM_matrix_neg = edge_vector_matrix_neg;
-clear sum_combined sum_pos sum_neg
+clear sum_pos sum_neg
 
+MxM_matrix_combined = pmask % is this the right way to get the combined pmask? do i even need to get it for pmask_get_consensus function?
 end
 

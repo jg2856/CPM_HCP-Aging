@@ -8,7 +8,7 @@ close all
 
 %% testing with my pmasks
 
-load('cpm_output.mat');
+% load('cpm_output.mat');
 
 pmask_stock = [];
 
@@ -23,7 +23,7 @@ end
 % pmask_test = cpm_output.pmask_struct(1).pmask;
 
 
-[pos_mat,neg_mat,pos_mat_size,neg_mat_size] = get_consensus_mask_suyeonpmask(cpm_output.pmask_struct(7).pmask,1,0.05);
+[combined_mat,pos_mat,neg_mat,pos_mat_size,neg_mat_size] = get_consensus_mask_suyeonpmask(cpm_output.pmask_struct(7).pmask,1,0.05);
 % get_consensus_mask_suyeonpmask(pmask_stock,1,0.05)
 
 %% visualization setup
@@ -118,8 +118,8 @@ for w = 1:length(new_assignments_final_matr_cell);
     mat_test_raw_edges_lower_tri = tril(mat_test_raw_edges,0);
     mat_test_edges_by_net_size_lower_tri =  tril(mat_test_edges_by_net_size,0);
 
-    mat_1{w} = mat_test_raw_edges_lower_tri;
-    mat_2{w} = mat_test_edges_by_net_size_lower_tri;
+    mat_1{w} = mat_test_raw_edges_lower_tri; % mat_1 is lower triangle of raw edges
+    mat_2{w} = mat_test_edges_by_net_size_lower_tri; % mat_2 is lower triangle of edges normalized by network size
     
 end
 
@@ -141,7 +141,7 @@ imagesc(mat_1{1,2})
 colorbar
 title('pos mask')
 
-saveas(gcf,'pos_neg_mask_network_representation_raw_edges_suyeonpmask_test_vismotor.png')
+% saveas(gcf,'pos_neg_mask_network_representation_raw_edges_suyeonpmask_test_vismotor.png')
 
 
 %mat_2 --> plotting the number of edges in a network normalizing by
@@ -158,7 +158,7 @@ imagesc(mat_2{1,2})
 colorbar
 title('pos mask')
 
-saveas(gcf,'pos_neg_mask_network_representation_raw_edges_normalized_suyeonpmask_test_vismotor.png')
+% saveas(gcf,'pos_neg_mask_network_representation_raw_edges_normalized_suyeonpmask_test_vismotor.png')
 
 
 % %saving results to current directory.
@@ -213,7 +213,7 @@ title('SLIM')
 % colormap(interp1(linspace(0,1,length(C)),C,linspace(0,1,250)))
 % colorbar 
 
-saveas(gcf,'matrix_visualization_mat_1_1_CPM_suyeonpmask_vismotor.jpg')
+% saveas(gcf,'matrix_visualization_mat_1_1_CPM_suyeonpmask_vismotor.jpg')
 
 % filename = 'matrix_visualization_for_publication_mat_1_1_su-run.mat';
 % save(filename)

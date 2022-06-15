@@ -10,8 +10,8 @@
 %       'tfMRI_CARIT', 'tfMRI_FACENAME', 'tfMRI_VISMOTOR'
 %       i.e., "{'rfMRI_REST1_AP', 'tfMRI_CARIT', 'tfMRI_FACENAME', 'tfMRI_VISMOTOR'}"
 
-% example command line: *** JUST RUN ONE PARAMETER AT A TIME FOR NOW!!! - because cpm_output.mat save command can only hold structs for one param at the moment!
-% >> run_cpm({'ravlt'},{'rfMRI_REST1_AP', 'rfMRI_REST1_PA', 'rfMRI_REST2_AP', 'rfMRI_REST2_PA','tfMRI_CARIT', 'tfMRI_FACENAME', 'tfMRI_VISMOTOR'})
+% example command line:
+% >> run_cpm({'ravlt','neon'},{'rfMRI_REST1_AP', 'rfMRI_REST1_PA', 'rfMRI_REST2_AP', 'rfMRI_REST2_PA','tfMRI_CARIT', 'tfMRI_FACENAME', 'tfMRI_VISMOTOR'})
 
 % Outputs:
 
@@ -132,9 +132,20 @@ for param = 1:length(param_list)
     disp(pmask_struct)
     disp(cpm_output)
     disp('check end')
+    
+    
+    % set pt array and param_data array to correct subj list/param scores, depending on input params
+    if strcmp(param_list{param},'ravlt')
+        save('pt_struct_ravlt.mat', 'pt_struct')
+        save('cpm_output_ravlt.mat', 'cpm_output')
+        disp('RAVLT results saved!')
+    end
+    if strcmp(param_list{param},'neon')
+        save('pt_struct_neon.mat', 'pt_struct')
+        save('cpm_output_neon.mat', 'cpm_output')
+        disp('NEO-N results saved!')
+    end
 end
-
-save('cpm_output.mat', 'cpm_output')
 
 toc;
 

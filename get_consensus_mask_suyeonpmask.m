@@ -1,10 +1,11 @@
-function [MxM_matrix_combined, MxM_matrix_pos,MxM_matrix_neg,size_of_pos_mask,size_of_neg_mask] = get_consensus_mask_suyeonpmask(pmask_stock,scan_to_use,thresholder_to_use)
+% function [MxM_matrix_combined, MxM_matrix_pos,MxM_matrix_neg,size_of_pos_mask,size_of_neg_mask] = get_consensus_mask_suyeonpmask(pmask_stock,scan_to_use,thresholder_to_use)
+function [MxM_matrix_pos,MxM_matrix_neg,size_of_pos_mask,size_of_neg_mask] = get_consensus_mask_suyeonpmask(pmask_stock,scan_to_use,thresholder_to_use)
 %fxn to get consensus mask
 
 thresholder = thresholder_to_use;
 
 % %lazy coding on my part, leaving remnants of for-loop in from before
-k = scan_to_use;
+% k = scan_to_use;
 
 % pmask_tmp = tmp(k,:,:);
 pmask = pmask_stock;
@@ -22,9 +23,11 @@ pmask_neg(pmask_neg==1) = 0;
 % find(pmask_neg ==1);
 
 %now am able to sum
-sum_combined = sum(pmask,2);
+% sum_combined = sum(pmask,2);
 sum_pos = sum(pmask_pos,2);
 sum_neg = sum(pmask_neg,2);
+% size(sum_combined)
+% size(sum_pos)
 
 sum_pos(sum_pos < ( size(pmask,2)* thresholder)) = 0;
 sum_neg(sum_neg > ( size(pmask,2)* thresholder)) = 0;
@@ -49,25 +52,29 @@ upp_id = find(aa_upp);
 upp_len = length(upp_id);
 
 %back in matrix format
+% edge_vector_matrix_combined = zeros(no_node, no_node);
 edge_vector_matrix_pos = zeros(no_node, no_node);
 edge_vector_matrix_neg = zeros(no_node, no_node);
 
 
 %now need to put idx_pos into 35,778 vector
 
-% just try this out!!!
-edge_vector_matrix_combined(upp_id) = sum_combined;
-edge_vector_matrix_combined = edge_vector_matrix_combined + edge_vector_matrix_combined';
-MxM_matrix_combined = edge_vector_matrix_combined;
+% % just try this out!!!
+% edge_vector_matrix_combined(upp_id) = sum_combined;
+% edge_vector_matrix_combined = edge_vector_matrix_combined + edge_vector_matrix_combined';
+% MxM_matrix_combined = edge_vector_matrix_combined;
+% size(MxM_matrix_combined)
 
 edge_vector_matrix_pos(upp_id) = sum_pos;
 edge_vector_matrix_pos = edge_vector_matrix_pos + edge_vector_matrix_pos';
 MxM_matrix_pos = edge_vector_matrix_pos;
+% size(MxM_matrix_pos)
 
 edge_vector_matrix_neg(upp_id) = sum_neg;
 edge_vector_matrix_neg = edge_vector_matrix_neg + edge_vector_matrix_neg';
 MxM_matrix_neg = edge_vector_matrix_neg;
-clear sum_combined sum_pos sum_neg
+% clear sum_combined sum_pos sum_neg
+clear sum_pos sum_neg
 
 end
 

@@ -25,6 +25,7 @@ pmask_neg(pmask_neg==1) = 0;
 sum_combined = sum(pmask,2);
 sum_pos = sum(pmask_pos,2);
 sum_neg = sum(pmask_neg,2);
+size(sum_combined
 
 sum_pos(sum_pos < ( size(pmask,2)* thresholder)) = 0;
 sum_neg(sum_neg > ( size(pmask,2)* thresholder)) = 0;
@@ -55,6 +56,11 @@ edge_vector_matrix_neg = zeros(no_node, no_node);
 
 %now need to put idx_pos into 35,778 vector
 
+% just try this out!!!
+edge_vector_matrix_combined(upp_id) = sum_combined;
+edge_vector_matrix_combined = edge_vector_matrix_combined + edge_vector_matrix_combined';
+MxM_matrix_combined = edge_vector_matrix_combined;
+
 edge_vector_matrix_pos(upp_id) = sum_pos;
 edge_vector_matrix_pos = edge_vector_matrix_pos + edge_vector_matrix_pos';
 MxM_matrix_pos = edge_vector_matrix_pos;
@@ -62,8 +68,7 @@ MxM_matrix_pos = edge_vector_matrix_pos;
 edge_vector_matrix_neg(upp_id) = sum_neg;
 edge_vector_matrix_neg = edge_vector_matrix_neg + edge_vector_matrix_neg';
 MxM_matrix_neg = edge_vector_matrix_neg;
-clear sum_pos sum_neg
+clear sum_combined sum_pos sum_neg
 
-MxM_matrix_combined = pmask % is this the right way to get the combined pmask? do i even need to get it for pmask_get_consensus function?
 end
 

@@ -15,19 +15,19 @@ load(output_file);
 
 switch scan_type_num
     case 1
-        scan_type = 'rfmri_REST1_AP'
+        scan_type = 'rfmri_REST1_AP';
     case 2
-        scan_type = 'rfmri_REST1_PA'
+        scan_type = 'rfmri_REST1_PA';
     case 3
-        scan_type = 'rfmri_REST2_AP'
+        scan_type = 'rfmri_REST2_AP';
     case 4
-        scan_type = 'rfmri_REST2_PA'
+        scan_type = 'rfmri_REST2_PA';
     case 5
-        scan_type = 'tfmri_CARIT'
+        scan_type = 'tfmri_CARIT';
     case 6
-        scan_type = 'tfmri_FACENAME'
+        scan_type = 'tfmri_FACENAME';
     case 7
-        scan_type = 'tfmri_VISMOTOR'
+        scan_type = 'tfmri_VISMOTOR';
 end
 
 % for i = 1:size(cpm_output.pmask_struct,2)
@@ -35,8 +35,11 @@ end
 % [combined_mat,pos_mat,neg_mat,pos_mat_size,neg_mat_size] = get_consensus_mask_suyeonpmask(cpm_output.pmask_struct(1).pmask,1,0.05);
 [pos_mat,neg_mat,pos_mat_size,neg_mat_size] = get_consensus_mask_suyeonpmask(cpm_output.pmask_struct(scan_type_num).pmask,1,0.05);
 
-csv_pos_filename = sprintf('%s_pos_mat_%s_p%.2f_k%d.csv',scan_type, param, p_thresh, k_folds);
-csv_neg_filename = sprintf('%s_neg_mat_%s_p%.2f_k%d.csv',scan_type, param, p_thresh, k_folds);
+% csv_pos_filename = sprintf('/Users/sj737/Library/CloudStorage/OneDrive-YaleUniversity/Fredericks_Lab_files/CPM_HCP-A/CPM_HCP-Aging/figs_and_csvmats/p%.2f_k%d/%s/csv_pos_mat/%s_pos_mat_%s_p%.2f_k%d.csv', p_thresh, k_folds, param, scan_type, param, p_thresh, k_folds);
+% csv_neg_filename = sprintf('/Users/sj737/Library/CloudStorage/OneDrive-YaleUniversity/Fredericks_Lab_files/CPM_HCP-A/CPM_HCP-Aging/figs_and_csvmats/p%.2f_k%d/%s/csv_neg_mat/%s_neg_mat_%s_p%.2f_k%d.csv', p_thresh, k_folds, param, scan_type, param, p_thresh, k_folds);
+
+csv_pos_filename = sprintf('/Users/sj737/Library/CloudStorage/OneDrive-YaleUniversity/Fredericks_Lab_files/CPM_HCP-A/CPM_HCP-Aging/figs_and_csvmats/p%.3f_k%d/%s/csv_pos_mat/%s_pos_mat_%s_p%.3f_k%d.csv', p_thresh, k_folds, param, scan_type, param, p_thresh, k_folds);
+csv_neg_filename = sprintf('/Users/sj737/Library/CloudStorage/OneDrive-YaleUniversity/Fredericks_Lab_files/CPM_HCP-A/CPM_HCP-Aging/figs_and_csvmats/p%.3f_k%d/%s/csv_neg_mat/%s_neg_mat_%s_p%.3f_k%d.csv', p_thresh, k_folds, param, scan_type, param, p_thresh, k_folds);
 
 csvwrite(csv_pos_filename,pos_mat)
 csvwrite(csv_neg_filename,neg_mat)
@@ -45,7 +48,7 @@ csvwrite(csv_neg_filename,neg_mat)
 no_nodes = 268;
 no_networks = 10;
 
-ten_network_defn_path =  '/Users/sj737/OneDrive-YaleUniversity/Fredericks_Lab_files/CPM_HCP-A';
+ten_network_defn_path =  '/Users/sj737/OneDrive-YaleUniversity/Fredericks_Lab_files/CPM_HCP-A/shen_268_labels';
 filename = 'ten_network_defn.mat';
 file = fullfile(ten_network_defn_path, filename);
 load(file);
@@ -156,7 +159,9 @@ imagesc(mat_1{1,2})
 colorbar
 title('neg mask')
 
-% saveas(gcf,'pos_neg_mask_network_representation_raw_edges_suyeonpmask_test_vismotor.png')
+% raw_edge_fig_filename = sprintf('/Users/sj737/Library/CloudStorage/OneDrive-YaleUniversity/Fredericks_Lab_files/CPM_HCP-A/CPM_HCP-Aging/figs_and_csvmats/p%.2f_k%d/%s/consensus_mask_figs/pos_neg_mask_network_representation_raw_edges_%s_%s_p%.2f_k%d.png', p_thresh, k_folds, param, scan_type, param, p_thresh, k_folds);
+raw_edge_fig_filename = sprintf('/Users/sj737/Library/CloudStorage/OneDrive-YaleUniversity/Fredericks_Lab_files/CPM_HCP-A/CPM_HCP-Aging/figs_and_csvmats/p%.3f_k%d/%s/consensus_mask_figs/pos_neg_mask_network_representation_raw_edges_%s_%s_p%.3f_k%d.png', p_thresh, k_folds, param, scan_type, param, p_thresh, k_folds);
+% saveas(gcf,raw_edge_fig_filename)
 
 
 %mat_2 --> plotting the number of edges in a network normalizing by
@@ -173,14 +178,16 @@ imagesc(mat_2{1,2})
 colorbar
 title('neg mask')
 
-% saveas(gcf,'pos_neg_mask_network_representation_raw_edges_normalized_suyeonpmask_test_vismotor.png')
+% norm_edge_fig_filename = sprintf('/Users/sj737/Library/CloudStorage/OneDrive-YaleUniversity/Fredericks_Lab_files/CPM_HCP-A/CPM_HCP-Aging/figs_and_csvmats/p%.2f_k%d/%s/consensus_mask_figs/pos_neg_mask_network_representation_raw_edges_normalized_%s_%s_p%.2f_k%d.png', p_thresh, k_folds, param, scan_type, param, p_thresh, k_folds);
+norm_edge_fig_filename = sprintf('/Users/sj737/Library/CloudStorage/OneDrive-YaleUniversity/Fredericks_Lab_files/CPM_HCP-A/CPM_HCP-Aging/figs_and_csvmats/p%.3f_k%d/%s/consensus_mask_figs/pos_neg_mask_network_representation_raw_edges_normalized_%s_%s_p%.3f_k%d.png', p_thresh, k_folds, param, scan_type, param, p_thresh, k_folds);
+% saveas(gcf,norm_edge_fig_filename)
 
 %% mat_1_1
 % %saving results to current directory.
 % filename = 'visualizing_CPM_results.mat';
 % save(filename)
 
-SLIM_DP_edges = mat_1{1,1};
+SLIM_DP_edges = mat_2{1,1};
 
 SLIM_DP_edges(:,end+1) = 0; % pad with zeros for pcolor
 SLIM_DP_edges(end+1,:) = 0;
@@ -228,10 +235,12 @@ title('SLIM')
 % colormap(interp1(linspace(0,1,length(C)),C,linspace(0,1,250)))
 % colorbar 
 
-% saveas(gcf,'matrix_visualization_mat_1_1_CPM_suyeonpmask_vismotor.jpg')
+% pos_mat_vis_fig_filename = sprintf('/Users/sj737/Library/CloudStorage/OneDrive-YaleUniversity/Fredericks_Lab_files/CPM_HCP-A/CPM_HCP-Aging/figs_and_csvmats/p%.2f_k%d/%s/consensus_mask_figs/matrix_visualization_mat_2_1_%s_%s_p%.2f_k%d.jpg', p_thresh, k_folds, param, scan_type, param, p_thresh, k_folds);
+pos_mat_vis_fig_filename = sprintf('/Users/sj737/Library/CloudStorage/OneDrive-YaleUniversity/Fredericks_Lab_files/CPM_HCP-A/CPM_HCP-Aging/figs_and_csvmats/p%.3f_k%d/%s/consensus_mask_figs/matrix_visualization_mat_2_1_%s_%s_p%.3f_k%d.jpg', p_thresh, k_folds, param, scan_type, param, p_thresh, k_folds);
+saveas(gcf,pos_mat_vis_fig_filename)
 
 %% mat_1_2
-SLIM_DP_edges = mat_1{1,2};
+SLIM_DP_edges = mat_2{1,2};
 
 SLIM_DP_edges(:,end+1) = 0; % pad with zeros for pcolor
 SLIM_DP_edges(end+1,:) = 0;
@@ -279,7 +288,9 @@ title('SLIM')
 % colormap(interp1(linspace(0,1,length(C)),C,linspace(0,1,250)))
 % colorbar 
 
-% saveas(gcf,'matrix_visualization_mat_1_1_CPM_suyeonpmask_vismotor.jpg')
+% neg_mat_vis_fig_filename = sprintf('/Users/sj737/Library/CloudStorage/OneDrive-YaleUniversity/Fredericks_Lab_files/CPM_HCP-A/CPM_HCP-Aging/figs_and_csvmats/p%.2f_k%d/%s/consensus_mask_figs/matrix_visualization_mat_2_2_%s_%s_p%.2f_k%d.jpg', p_thresh, k_folds, param, scan_type, param, p_thresh, k_folds);
+neg_mat_vis_fig_filename = sprintf('/Users/sj737/Library/CloudStorage/OneDrive-YaleUniversity/Fredericks_Lab_files/CPM_HCP-A/CPM_HCP-Aging/figs_and_csvmats/p%.3f_k%d/%s/consensus_mask_figs/matrix_visualization_mat_2_2_%s_%s_p%.3f_k%d.jpg', p_thresh, k_folds, param, scan_type, param, p_thresh, k_folds);
+saveas(gcf,neg_mat_vis_fig_filename)
 
 % filename = 'matrix_visualization_for_publication_mat_1_1_su-run.mat';
 % save(filename)

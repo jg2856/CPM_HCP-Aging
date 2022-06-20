@@ -1,10 +1,10 @@
 
 
-cpm_output_file = 'cpm_output_ravlt_p0.05_k5.mat';
-p_thresh = 0.05;
+cpm_output_file = 'cpm_output_ravlt_p0.001_k5.mat';
+p_thresh = 0.001;
 k_folds = 5;
 param = 'ravlt';
-scan_type_num = 1;
+% scan_type_num = 1;
 
 % switch scan_type_num
 %     case 1
@@ -22,5 +22,6 @@ scan_type_num = 1;
 %     case 7
 %         scan_type = 'tfmri_VISMOTOR'
 % end
-
-pmask_get_consensus_suyeonpmask_test(cpm_output_file, p_thresh, k_folds, param, scan_type_num)
+for i = 1:7
+    pmask_get_consensus_suyeonpmask_test(cpm_output_file, p_thresh, k_folds, param, i)
+end

@@ -23,6 +23,7 @@ k = scan_to_use;
     
     
 pmask_tmp = tmp(k,:,:);
+size(pmask_tmp)
 pmask = squeeze(pmask_tmp);
 disp('pmask')
 size(pmask)

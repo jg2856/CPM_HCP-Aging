@@ -20,17 +20,21 @@
 function run_cpm_sort_sex(param_list, scan_type_list)
 tic;
 
+CPM_HCP_Aging_path = '/data23/mri_researchers/fredericks_data/shared/hcp_aging_analyses/hcp-a_cpm/CPM_HCP-Aging/';
+hcp_a_cpm_path = '/data23/mri_researchers/fredericks_data/shared/hcp_aging_analyses/hcp-a_cpm/';
+behavioralData_path = '/data23/mri_group/an_data/HCP-A2.0/behavioralData/';
+
 for param = 1:length(param_list)
-    cd '/data23/mri_researchers/fredericks_data/shared/hcp_aging_analyses/hcp-a_cpm/CPM_HCP-Aging/'
+    cd CPM_HCP_Aging_path
     
     %% PT LIST SETUP
     % collect subj demographic info
-    all_pt_demos_temp = readtable('/data23/mri_researchers/fredericks_data/shared/hcp_aging_analyses/hcp-a_cpm/HCP-A_cpm_pt_demos.csv');
+    all_pt_demos_temp = readtable(strcat(hcp_a_cpm_path,'HCP-A_cpm_pt_demos.csv'));
     all_pt_demos = table(all_pt_demos_temp.interview_age, all_pt_demos_temp.sex, 'RowNames',all_pt_demos_temp.src_subject_id);
     all_pt_demos.Properties.VariableNames = ["age", "sex"];
     
     % collect all subj ID lists
-    all_param_pt = readtable('/data23/mri_researchers/fredericks_data/shared/hcp_aging_analyses/hcp-a_cpm/HCP-A_cpm_project_exclusion_criteria.csv');
+    all_param_pt = readtable(strcat(hcp_a_cpm_path,'HCP-A_cpm_project_exclusion_criteria.csv'));
     
     % set up array for correct subj list from all_subjs
     pt = [];
@@ -38,13 +42,13 @@ for param = 1:length(param_list)
     % set up array for parameter data for each subj
     param_data = [];
     
-    %% set pt array and param_data array to correct subj list/param scores, depending on input params
+    %% set pt array and param_data array to correct subj list/param scores, depending on input params (MAKE FUNCTION OUT OF THIS LATER!!!)
     if strcmp(param_list{param},'ravlt')
         pt = all_param_pt.ravlt(1:567,:);
-        opts = detectImportOptions('/data23/mri_group/an_data/HCP-A2.0/behavioralData/ravlt01.txt');
+        opts = detectImportOptions(strcat(behavioralData_path,'ravlt01.txt'));
         opts.DataLines = 3;
         opts.VariableNamesLine = 1;
-        ravlt_data = readtable('/data23/mri_group/an_data/HCP-A2.0/behavioralData/ravlt01.txt',opts);
+        ravlt_data = readtable(strcat(behavioralData_path,'ravlt01.txt'),opts);
         param_data = NaN(length(pt),1);
         for i = 1:length(pt)
             param_data(i) = ravlt_data{strcmp(ravlt_data.src_subject_id, pt(i)),'pea_ravlt_sd_tc'}; % RAVLT Short Delay Total Correct
@@ -52,10 +56,10 @@ for param = 1:length(param_list)
     end
     if strcmp(param_list{param},'neon')
         pt = all_param_pt.neon(1:579,:);
-        opts = detectImportOptions('/data23/mri_group/an_data/HCP-A2.0/behavioralData/nffi01.txt');
+        opts = detectImportOptions(strcat(behavioralData_path,'nffi01.txt'));
         opts.DataLines = 3;
         opts.VariableNamesLine = 1;
-        neon_data = readtable('/data23/mri_group/an_data/HCP-A2.0/behavioralData/nffi01.txt',opts);
+        neon_data = readtable(strcat(behavioralData_path,'nffi01.txt'),opts);
         param_data = NaN(length(pt),1);
         for i = 1:length(pt)
             param_data(i) = neon_data{strcmp(neon_data.src_subject_id, pt(i)),'neo2_score_ne'}; % Neuroticism score
@@ -109,8 +113,8 @@ for param = 1:length(param_list)
         
     end
     
-%     disp(conn_mat_struct_F)
-%     disp(conn_mat_struct_M)
+    disp(conn_mat_struct_F)
+    disp(conn_mat_struct_M)
 
     %% CODE TO RUN CPM!!! ***
     
@@ -123,7 +127,7 @@ for param = 1:length(param_list)
     for c = [conn_mat_struct_F,conn_mat_struct_M]
         i = 1;
         for st = 1:length(scan_type_list)
-            cd '/data23/mri_researchers/fredericks_data/shared/hcp_aging_analyses/hcp-a_cpm/CPM_HCP-Aging/'
+            cd CPM_HCP_Aging_path
 
             %% run cpm here!! 
             disp(c(st)) % *** FIGURED IT OUT!!! NEED TO FIX THE PARAM DATA IN CPM_MAIN LINE (NEXT LINE)
@@ -173,5 +177,5 @@ for param = 1:length(param_list)
 % 
 % toc;
 % 
-cd '/data23/mri_researchers/fredericks_data/shared/hcp_aging_analyses/hcp-a_cpm/CPM_HCP-Aging/'
+cd CPM_HCP_Aging_path
 end

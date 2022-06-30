@@ -77,11 +77,6 @@ for param = 1:length(param_list)
     pt_table_M = pt_table(strcmp(pt_table.sex, 'M'),:);
     
     pt_struct = struct('pt_all',pt_table, 'pt_F',pt_table_F, 'pt_M',pt_table_M);
-    
-%     disp(pt_table_F.y)
-%     size(pt_table)
-%     size(pt_table_F.y)
-%     size(pt_table_M.y)
 
     %% CONN_MAT STRUCT SETUP
     % initialize struct with all conn_mats (n x m x n_subs) for each scan type in scan_type_list (conn_mat_struct)
@@ -102,7 +97,6 @@ for param = 1:length(param_list)
                 CM_dir = sprintf('/data23/mri_researchers/fredericks_data/shared/hcp_aging_analyses/hcp-a_cpm/%s/connmat_output', scan_type_list{st});
                 cd(CM_dir)
                 
-%                 disp(char(pts.pt_id(sub)))
                 CM_filename = sprintf('%s_bis_matrix_1_matrix.txt', char(pts.pt_id(sub)));
                 conn_mat_single = load(CM_filename);
                 conn_mat = cat(3,conn_mat,conn_mat_single);
@@ -119,9 +113,6 @@ for param = 1:length(param_list)
         end
         
     end
-    
-%     disp(conn_mat_struct_F)
-%     disp(conn_mat_struct_M)
 
     %% CODE TO RUN CPM!!! ***
     
@@ -129,29 +120,17 @@ for param = 1:length(param_list)
     % initialize structs with all cpm outputs(y_hat and corr) for each 
     %   scan type (y_hat_struct and corr_struct)
     
-    %% NEED TWO DIFFERENT PARAM_DATA'S (ONE FOR EACH SEX)!
     i = 1; % i = 1: female, i = 2: male
     for c = [conn_mat_struct_F,conn_mat_struct_M]
         for st = 1:length(scan_type_list)
             cd(CPM_HCP_Aging_path)
-            
-%             disp(i)
             %% run cpm here!!
             if i == 1
-%                 size(c(st).conn_mat)
-%                 size(pt_table_F.y')
                 [y_hat_output,corr_output,randinds_output,pmask_output] = cpm_main(c(st).conn_mat,pt_table_F.y','pthresh',0.01,'kfolds',5);
             end
             if i == 2
-%                 size(c(st).conn_mat)
-%                 size(pt_table_M.y')
                 [y_hat_output,corr_output,randinds_output,pmask_output] = cpm_main(c(st).conn_mat,pt_table_M.y','pthresh',0.01,'kfolds',5);
             end
-            
-%             y_hat_struct(length(scan_type_list)) = struct('scan_type',[],'y_hat',[]);
-%             corr_struct(length(scan_type_list)) = struct('scan_type',[],'corr',[]);
-%             randinds_struct(length(scan_type_list)) = struct('scan_type',[],'randinds',[]);
-%             pmask_struct(length(scan_type_list)) = struct('scan_type',[],'pmask',[]);
 
             y_hat_struct(st) = struct('scan_type',scan_type_list(st),'y_hat',y_hat_output);
             corr_struct(st) = struct('scan_type',scan_type_list(st),'corr',corr_output);
@@ -163,18 +142,6 @@ for param = 1:length(param_list)
     cpm_output(i) = struct('y_hat_struct',y_hat_struct,'corr_struct',corr_struct,'randinds_struct',randinds_struct, 'pmask_struct',pmask_struct);
         i = i+1;
     end
-    
-%     %% CHECK SCRIPT!!!
-%     disp('CHECK!!')
-%     disp(cpm_output)
-%     disp(cpm_output(1))
-%     disp(cpm_output(2))
-% %     disp(y_hat_struct)
-% %     disp(corr_struct)
-% %     disp(randinds_struct)
-% %     disp(pmask_struct)
-%     
-%     disp('check end')
     
     
     % set pt array and param_data array to correct subj list/param scores, depending on input params

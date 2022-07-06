@@ -76,7 +76,7 @@ for param = 1:length(param_list)
     pt_table_F = pt_table(strcmp(pt_table.sex, 'F'),:);
     pt_table_M = pt_table(strcmp(pt_table.sex, 'M'),:);
     
-    pt_struct = struct('pt_all',pt_table, 'pt_F',pt_table_F, 'pt_M',pt_table_M);
+    pt_struct_by_sex = struct('pt_all',pt_table, 'pt_F',pt_table_F, 'pt_M',pt_table_M);
 
     %% CONN_MAT STRUCT SETUP
     % initialize struct with all conn_mats (n x m x n_subs) for each scan type in scan_type_list (conn_mat_struct)
@@ -107,9 +107,11 @@ for param = 1:length(param_list)
         
         if g == 'F'
             conn_mat_struct_F = conn_mat_struct;
+            size(conn_mat_struct_F)
         end
         if g == 'M'
             conn_mat_struct_M = conn_mat_struct;
+            size(conn_mat_struct_M)
         end
         
     end
@@ -120,39 +122,71 @@ for param = 1:length(param_list)
     % initialize structs with all cpm outputs(y_hat and corr) for each 
     %   scan type (y_hat_struct and corr_struct)
     
-    i = 1; % i = 1: female, i = 2: male
-    for c = [conn_mat_struct_F,conn_mat_struct_M]
-        for st = 1:length(scan_type_list)
-            cd(CPM_HCP_Aging_path)
-            %% run cpm here!!
-            if i == 1
-                [y_hat_output,corr_output,randinds_output,pmask_output] = cpm_main(c(st).conn_mat,pt_table_F.y','pthresh',0.01,'kfolds',5);
-            end
-            if i == 2
-                [y_hat_output,corr_output,randinds_output,pmask_output] = cpm_main(c(st).conn_mat,pt_table_M.y','pthresh',0.01,'kfolds',5);
-            end
+%     i = 1; % i = 1: female, i = 2: male
+%     for c = [conn_mat_struct_F,conn_mat_struct_M]
+%         for st = 1:length(scan_type_list)
+%             cd(CPM_HCP_Aging_path)
+%             %% run cpm here!!
+%             if i == 1
+%                 size(c(st).conn_mat)
+%                 size(pt_table_F.y')
+%                 [y_hat_output,corr_output,randinds_output,pmask_output] = cpm_main(c(st).conn_mat,pt_table_F.y','pthresh',0.01,'kfolds',5);
+%             end
+%             if i == 2
+%                 size(c(st).conn_mat)
+%                 size(pt_table_M.y')
+%                 [y_hat_output,corr_output,randinds_output,pmask_output] = cpm_main(c(st).conn_mat,pt_table_M.y','pthresh',0.01,'kfolds',5);
+%             end
+% 
+%             y_hat_struct(st) = struct('scan_type',scan_type_list(st),'y_hat',y_hat_output);
+%             corr_struct(st) = struct('scan_type',scan_type_list(st),'corr',corr_output);
+%             randinds_struct(st) = struct('scan_type',scan_type_list(st),'randinds',randinds_output);
+%             pmask_struct(st) = struct('scan_type',scan_type_list(st),'pmask',pmask_output);
+%         end
+%     
+%     % create cpm_output struct to hold both y_hat_struct and corr_struct
+%     cpm_output(i) = struct('y_hat_struct',y_hat_struct,'corr_struct',corr_struct,'randinds_struct',randinds_struct, 'pmask_struct',pmask_struct);
+%         i = i+1;
+%     end
+    
+    %% create cpm_output struct to hold both y_hat_struct and corr_struct
+    for st = 1:length(scan_type_list)
+        cd(CPM_HCP_Aging_path)
 
-            y_hat_struct(st) = struct('scan_type',scan_type_list(st),'y_hat',y_hat_output);
-            corr_struct(st) = struct('scan_type',scan_type_list(st),'corr',corr_output);
-            randinds_struct(st) = struct('scan_type',scan_type_list(st),'randinds',randinds_output);
-            pmask_struct(st) = struct('scan_type',scan_type_list(st),'pmask',pmask_output);
-        end
-    
-    % create cpm_output struct to hold both y_hat_struct and corr_struct
-    cpm_output(i) = struct('y_hat_struct',y_hat_struct,'corr_struct',corr_struct,'randinds_struct',randinds_struct, 'pmask_struct',pmask_struct);
-        i = i+1;
+        size(conn_mat_struct_F(st).conn_mat)
+        size(pt_table_F.y')
+        [y_hat_output,corr_output,randinds_output,pmask_output] = cpm_main(conn_mat_struct_F(st).conn_mat,pt_table_F.y','pthresh',0.01,'kfolds',5);
+
+        y_hat_struct(st) = struct('scan_type',scan_type_list(st),'y_hat',y_hat_output);
+        corr_struct(st) = struct('scan_type',scan_type_list(st),'corr',corr_output);
+        randinds_struct(st) = struct('scan_type',scan_type_list(st),'randinds',randinds_output);
+        pmask_struct(st) = struct('scan_type',scan_type_list(st),'pmask',pmask_output);
     end
+    cpm_output_by_sex(1) = struct('y_hat_struct',y_hat_struct,'corr_struct',corr_struct,'randinds_struct',randinds_struct, 'pmask_struct',pmask_struct);
     
+    for st = 1:length(scan_type_list)
+        cd(CPM_HCP_Aging_path)
+
+        size(conn_mat_struct_M(st).conn_mat)
+        size(pt_table_M.y')
+        [y_hat_output,corr_output,randinds_output,pmask_output] = cpm_main(conn_mat_struct_M(st).conn_mat,pt_table_M.y','pthresh',0.01,'kfolds',5);
+
+        y_hat_struct(st) = struct('scan_type',scan_type_list(st),'y_hat',y_hat_output);
+        corr_struct(st) = struct('scan_type',scan_type_list(st),'corr',corr_output);
+        randinds_struct(st) = struct('scan_type',scan_type_list(st),'randinds',randinds_output);
+        pmask_struct(st) = struct('scan_type',scan_type_list(st),'pmask',pmask_output);
+    end
+    cpm_output_by_sex(2) = struct('y_hat_struct',y_hat_struct,'corr_struct',corr_struct,'randinds_struct',randinds_struct, 'pmask_struct',pmask_struct);
     
-    % set pt array and param_data array to correct subj list/param scores, depending on input params
+    %% set pt array and param_data array to correct subj list/param scores, depending on input params
     if strcmp(param_list{param},'ravlt')
-        save('pt_struct_ravlt_by_sex.mat', 'pt_struct')
-        save('cpm_output_ravlt_by_sex.mat', 'cpm_output')
+        save('pt_struct_ravlt_by_sex.mat', 'pt_struct_by_sex')
+        save('cpm_output_ravlt_by_sex.mat', 'cpm_output_by_sex')
         disp('RAVLT results saved!')
     end
     if strcmp(param_list{param},'neon')
-        save('pt_struct_neon_by_sex.mat', 'pt_struct')
-        save('cpm_output_neon_by_sex.mat', 'cpm_output')
+        save('pt_struct_neon_by_sex.mat', 'pt_struct_by_sex')
+        save('cpm_output_neon_by_sex.mat', 'cpm_output_by_sex')
         disp('NEO-N results saved!')
     end
 end

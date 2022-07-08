@@ -94,7 +94,7 @@ for param = 1:length(param_list)
                 'sex',all_pt_demos{pt(sub),'sex'},'y',param_data(sub));
         end
         %% CONN_MAT STRUCT POPULATION
-        conn_mat_struct_allsubjs(st) = struct('scan_type',scan_type_list(st),'conn_mat', conn_mat);
+        conn_mat_struct_allsubjs.(char(scan_type_list(st))).char('conn_mat') = conn_mat;
         
     end
 
@@ -104,10 +104,7 @@ for param = 1:length(param_list)
     % initialize structs with all cpm outputs(y_hat and corr) for each 
     %   scan type (y_hat_struct and corr_struct)
     
-    y_hat_struct(length(scan_type_list)) = struct('scan_type',[],'y_hat',[]);
-    corr_struct(length(scan_type_list)) = struct('scan_type',[],'corr',[]);
-    randinds_struct(length(scan_type_list)) = struct('scan_type',[],'randinds',[]);
-    pmask_struct(length(scan_type_list)) = struct('scan_type',[],'pmask',[]);
+    cpm_output_allsubjs = struct();
     
     for st = 1:length(scan_type_list)
         cd '/data23/mri_researchers/fredericks_data/shared/hcp_aging_analyses/hcp-a_cpm/CPM_HCP-Aging/'
@@ -127,14 +124,11 @@ for param = 1:length(param_list)
             pmask_output_100(:,:,i) = pmask_output;
         end
         
-        y_hat_struct(st) = struct('scan_type',scan_type_list(st),'y_hat',y_hat_output_100);
-        corr_struct(st) = struct('scan_type',scan_type_list(st),'corr',corr_output_100);
-        randinds_struct(st) = struct('scan_type',scan_type_list(st),'randinds',randinds_output_100);
-        pmask_struct(st) = struct('scan_type',scan_type_list(st),'pmask',pmask_output_100);
+        cpm_output_allsubjs.(char('y_hat_struct')).(char(scan_type_list(st))).('y_hat') = y_hat_output_100;
+        cpm_output_allsubjs.(char('corr_struct')).(char(scan_type_list(st))).('corr') = corr_output_100;
+        cpm_output_allsubjs.(char('randinds_struct')).(char(scan_type_list(st))).('randinds') = randinds_output_100;
+        cpm_output_allsubjs.(char('pmask_struct')).(char(scan_type_list(st))).('pmask') = pmask_output_100;
     end
-    
-    % create cpm_output struct to hold both y_hat_struct and corr_struct
-    cpm_output_allsubjs = struct('y_hat_struct',y_hat_struct,'corr_struct',corr_struct,'randinds_struct',randinds_struct, 'pmask_struct',pmask_struct);
     
     %% COLLECT PT INFO, CPM OUTPUTS, AND ALL CONNECTIVITY MATRICES!
     if strcmp(param_list{param},'ravlt')

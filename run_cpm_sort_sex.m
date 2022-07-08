@@ -138,7 +138,7 @@ for param = 1:length(param_list)
         end
         
         y_hat_struct_F(st) = struct('scan_type',scan_type_list(st),'y_hat',y_hat_output_F_100);
-        corr_struct_F(st) = struct('scan_type',scan_type_list(st),'corr',corr_outputs_F_100);
+        corr_struct_F(st) = struct('scan_type',scan_type_list(st),'corr',corr_output_F_100);
         randinds_struct_F(st) = struct('scan_type',scan_type_list(st),'randinds',randinds_output_F_100);
         pmask_struct_F(st) = struct('scan_type',scan_type_list(st),'pmask',pmask_output_F_100);
     end

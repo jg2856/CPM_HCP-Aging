@@ -1,7 +1,8 @@
+% ravlt allsubjs corrs
+load(sprintf('../BIG_data_from_CPM_HCP-Aging/%s_allsubjs_cpm_output.mat',char(param_list{1})),'cpm_output_allsubjs')
 
-
-cpm_output_file = 'cpm_output_ravlt_p0.001_k5.mat';
-p_thresh = 0.001;
+cpm_output_file = cpm_output_allsubjs;
+p_thresh = 0.01;
 k_folds = 5;
 param = 'ravlt';
 % scan_type_num = 1;

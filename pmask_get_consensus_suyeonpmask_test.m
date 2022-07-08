@@ -35,11 +35,8 @@ end
 % [combined_mat,pos_mat,neg_mat,pos_mat_size,neg_mat_size] = get_consensus_mask_suyeonpmask(cpm_output.pmask_struct(1).pmask,1,0.05);
 [pos_mat,neg_mat,pos_mat_size,neg_mat_size] = get_consensus_mask_suyeonpmask(cpm_output.pmask_struct(scan_type_num).pmask,1,0.05);
 
-% csv_pos_filename = sprintf('/Users/sj737/Library/CloudStorage/OneDrive-YaleUniversity/Fredericks_Lab_files/CPM_HCP-A/CPM_HCP-Aging/figs_and_csvmats/p%.2f_k%d/%s/csv_pos_mat/%s_pos_mat_%s_p%.2f_k%d.csv', p_thresh, k_folds, param, scan_type, param, p_thresh, k_folds);
-% csv_neg_filename = sprintf('/Users/sj737/Library/CloudStorage/OneDrive-YaleUniversity/Fredericks_Lab_files/CPM_HCP-A/CPM_HCP-Aging/figs_and_csvmats/p%.2f_k%d/%s/csv_neg_mat/%s_neg_mat_%s_p%.2f_k%d.csv', p_thresh, k_folds, param, scan_type, param, p_thresh, k_folds);
-
-csv_pos_filename = sprintf('/Users/sj737/Library/CloudStorage/OneDrive-YaleUniversity/Fredericks_Lab_files/CPM_HCP-A/CPM_HCP-Aging/figs_and_csvmats/p%.3f_k%d/%s/csv_pos_mat/%s_pos_mat_%s_p%.3f_k%d.csv', p_thresh, k_folds, param, scan_type, param, p_thresh, k_folds);
-csv_neg_filename = sprintf('/Users/sj737/Library/CloudStorage/OneDrive-YaleUniversity/Fredericks_Lab_files/CPM_HCP-A/CPM_HCP-Aging/figs_and_csvmats/p%.3f_k%d/%s/csv_neg_mat/%s_neg_mat_%s_p%.3f_k%d.csv', p_thresh, k_folds, param, scan_type, param, p_thresh, k_folds);
+csv_pos_filename = sprintf('/Users/sj737/Library/CloudStorage/OneDrive-YaleUniversity/Fredericks_Lab_files/CPM_HCP-A/CPM_HCP-Aging/figs_and_csvmats/p%.2f_k%d/%s/csv_pos_mat/%s_pos_mat_%s_p%.2f_k%d.csv', p_thresh, k_folds, param, scan_type, param, p_thresh, k_folds);
+csv_neg_filename = sprintf('/Users/sj737/Library/CloudStorage/OneDrive-YaleUniversity/Fredericks_Lab_files/CPM_HCP-A/CPM_HCP-Aging/figs_and_csvmats/p%.2f_k%d/%s/csv_neg_mat/%s_neg_mat_%s_p%.2f_k%d.csv', p_thresh, k_folds, param, scan_type, param, p_thresh, k_folds);
 
 csvwrite(csv_pos_filename,pos_mat)
 csvwrite(csv_neg_filename,neg_mat)

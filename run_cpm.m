@@ -18,7 +18,7 @@
 %% Implementation
 
 function run_cpm(param_list, scan_type_list)
-tic;
+% tic;
 
 for param = 1:length(param_list)
     cd '/data23/mri_researchers/fredericks_data/shared/hcp_aging_analyses/hcp-a_cpm/CPM_HCP-Aging/'
@@ -64,11 +64,11 @@ for param = 1:length(param_list)
     
     %% PT STRUCT SETUP
     % initialize struct with all pt demo info and conn mats (pt_struct)
-    pt_struct(length(pt)) = struct('pt_id',[],'age',[],'sex',[],'y',[]);
+    pt_struct_allsubjs(length(pt)) = struct('pt_id',[],'age',[],'sex',[],'y',[]);
     
     %% CONN_MAT STRUCT SETUP
     % initialize struct with all conn_mats (n x m x n_subs) for each scan type in scan_type_list (conn_mat_struct)
-    conn_mat_struct(length(scan_type_list)) = struct('scan_type',[],'conn_mat',[]);
+    conn_mat_struct_allsubjs(length(scan_type_list)) = struct('scan_type',[],'conn_mat',[]);
     
     for st = 1:length(scan_type_list)
         %% CONN_MAT SETUP/COLLECTION
@@ -90,11 +90,11 @@ for param = 1:length(param_list)
                 continue;
             end
             %% PT STRUCT POPULATION 
-            pt_struct(sub) = struct('pt_id',pt(sub),'age',all_pt_demos{pt(sub),'age'},...
+            pt_struct_allsubjs(sub) = struct('pt_id',pt(sub),'age',all_pt_demos{pt(sub),'age'},...
                 'sex',all_pt_demos{pt(sub),'sex'},'y',param_data(sub));
         end
         %% CONN_MAT STRUCT POPULATION
-        conn_mat_struct(st) = struct('scan_type',scan_type_list(st),'conn_mat', conn_mat);
+        conn_mat_struct_allsubjs(st) = struct('scan_type',scan_type_list(st),'conn_mat', conn_mat);
         
     end
 
@@ -113,41 +113,41 @@ for param = 1:length(param_list)
         cd '/data23/mri_researchers/fredericks_data/shared/hcp_aging_analyses/hcp-a_cpm/CPM_HCP-Aging/'
         
         %% run cpm here!! 
-        [y_hat_output,corr_output,randinds_output,pmask_output] = cpm_main(conn_mat_struct(st).conn_mat,param_data','pthresh',0.01,'kfolds',5);
+        y_hat_output_100 = zeros(length(param_data),100);
+        corr_output_100 = zeros(2, 100);
+        randinds_output_100 = zeros(length(param_data),100);
+        pmask_output_100 = zeros(35778,5,100);
         
-        y_hat_struct(st) = struct('scan_type',scan_type_list(st),'y_hat',y_hat_output);
-        corr_struct(st) = struct('scan_type',scan_type_list(st),'corr',corr_output);
-        randinds_struct(st) = struct('scan_type',scan_type_list(st),'randinds',randinds_output);
-        pmask_struct(st) = struct('scan_type',scan_type_list(st),'pmask',pmask_output);
+        for i = 1:100
+            [y_hat_output,corr_output,randinds_output,pmask_output] = cpm_main(conn_mat_struct_allsubjs(st).conn_mat,param_data','pthresh',0.01,'kfolds',5);
+            y_hat_output_100(:,i) = y_hat_output;
+            corr_output_100(1,i) =  corr_output(1);
+            corr_output_100(2,i) =  corr_output(2);
+            randinds_output_100(:,i) = randinds_output';
+            pmask_output_100(:,:,i) = pmask_output;
+        end
+        
+        y_hat_struct(st) = struct('scan_type',scan_type_list(st),'y_hat',y_hat_output_100);
+        corr_struct(st) = struct('scan_type',scan_type_list(st),'corr',corr_output_100);
+        randinds_struct(st) = struct('scan_type',scan_type_list(st),'randinds',randinds_output_100);
+        pmask_struct(st) = struct('scan_type',scan_type_list(st),'pmask',pmask_output_100);
     end
     
     % create cpm_output struct to hold both y_hat_struct and corr_struct
-    cpm_output = struct('y_hat_struct',y_hat_struct,'corr_struct',corr_struct,'randinds_struct',randinds_struct, 'pmask_struct',pmask_struct);
+    cpm_output_allsubjs = struct('y_hat_struct',y_hat_struct,'corr_struct',corr_struct,'randinds_struct',randinds_struct, 'pmask_struct',pmask_struct);
     
-    %% CHECK SCRIPT!!!
-    disp('CHECK!!')
-    disp(y_hat_struct)
-    disp(corr_struct)
-    disp(randinds_struct)
-    disp(pmask_struct)
-    disp(cpm_output)
-    disp('check end')
-    
-    
-    % set pt array and param_data array to correct subj list/param scores, depending on input params
+    %% COLLECT PT INFO, CPM OUTPUTS, AND ALL CONNECTIVITY MATRICES!
     if strcmp(param_list{param},'ravlt')
-        save('pt_struct_ravlt.mat', 'pt_struct')
-        save('cpm_output_ravlt.mat', 'cpm_output')
+        save('ravlt_allsubjs.mat', 'pt_struct_allsubjs', 'cpm_output_allsubjs', 'conn_mat_struct_allsubjs','-v7.3')
         disp('RAVLT results saved!')
     end
     if strcmp(param_list{param},'neon')
-        save('pt_struct_neon.mat', 'pt_struct')
-        save('cpm_output_neon.mat', 'cpm_output')
+        save('neon_allsubjs.mat', 'pt_struct_allsubjs', 'cpm_output_allsubjs', 'conn_mat_struct_allsubjs','-v7.3')
         disp('NEO-N results saved!')
     end
 end
 
-toc;
+% toc;
 
 cd '/data23/mri_researchers/fredericks_data/shared/hcp_aging_analyses/hcp-a_cpm/CPM_HCP-Aging/'
 end

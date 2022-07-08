@@ -107,11 +107,9 @@ for param = 1:length(param_list)
         
         if g == 'F'
             conn_mat_struct_F = conn_mat_struct;
-            size(conn_mat_struct_F)
         end
         if g == 'M'
             conn_mat_struct_M = conn_mat_struct;
-            size(conn_mat_struct_M)
         end
         
     end
@@ -124,31 +122,51 @@ for param = 1:length(param_list)
     % create cpm_output struct to hold both y_hat_struct and corr_struct
     for st = 1:length(scan_type_list)
         cd(CPM_HCP_Aging_path)
-
-        size(conn_mat_struct_F(st).conn_mat)
-        size(pt_table_F.y')
-        [y_hat_output,corr_output,randinds_output,pmask_output] = cpm_main(conn_mat_struct_F(st).conn_mat,pt_table_F.y','pthresh',0.01,'kfolds',5);
-
-        y_hat_struct(st) = struct('scan_type',scan_type_list(st),'y_hat',y_hat_output);
-        corr_struct(st) = struct('scan_type',scan_type_list(st),'corr',corr_output);
-        randinds_struct(st) = struct('scan_type',scan_type_list(st),'randinds',randinds_output);
-        pmask_struct(st) = struct('scan_type',scan_type_list(st),'pmask',pmask_output);
+        
+        %% run cpm here!! 
+        y_hat_output_F_100 = zeros(length(pt_table_F.y),100);
+        corr_output_F_100 = zeros(2, 100);
+        randinds_output_F_100 = zeros(length(pt_table_F.y),100);
+        pmask_output_F_100 = zeros(35778,5,100);
+        for i = 1:100
+            [y_hat_output_F,corr_output_F,randinds_output_F,pmask_output_F] = cpm_main(conn_mat_struct_F(st).conn_mat,pt_table_F.y','pthresh',0.01,'kfolds',5);
+            y_hat_output_F_100(:,i) = y_hat_output_F;
+            corr_output_F_100(1,i) =  corr_output_F(1);
+            corr_output_F_100(2,i) =  corr_output_F(2);
+            randinds_output_F_100(:,i) = randinds_output_F';
+            pmask_output_F_100(:,:,i) = pmask_output_F;
+        end
+        
+        y_hat_struct_F(st) = struct('scan_type',scan_type_list(st),'y_hat',y_hat_output_F_100);
+        corr_struct_F(st) = struct('scan_type',scan_type_list(st),'corr',corr_outputs_F_100);
+        randinds_struct_F(st) = struct('scan_type',scan_type_list(st),'randinds',randinds_output_F_100);
+        pmask_struct_F(st) = struct('scan_type',scan_type_list(st),'pmask',pmask_output_F_100);
     end
-    cpm_output_by_sex(1) = struct('y_hat_struct',y_hat_struct,'corr_struct',corr_struct,'randinds_struct',randinds_struct, 'pmask_struct',pmask_struct);
+    cpm_output_by_sex(1) = struct('y_hat_struct',y_hat_struct_F,'corr_struct',corr_struct_F,'randinds_struct',randinds_struct_F, 'pmask_struct',pmask_struct_F);
     
     for st = 1:length(scan_type_list)
         cd(CPM_HCP_Aging_path)
-
-        size(conn_mat_struct_M(st).conn_mat)
-        size(pt_table_M.y')
-        [y_hat_output,corr_output,randinds_output,pmask_output] = cpm_main(conn_mat_struct_M(st).conn_mat,pt_table_M.y','pthresh',0.01,'kfolds',5);
-
-        y_hat_struct(st) = struct('scan_type',scan_type_list(st),'y_hat',y_hat_output);
-        corr_struct(st) = struct('scan_type',scan_type_list(st),'corr',corr_output);
-        randinds_struct(st) = struct('scan_type',scan_type_list(st),'randinds',randinds_output);
-        pmask_struct(st) = struct('scan_type',scan_type_list(st),'pmask',pmask_output);
+        
+        %% run cpm here!! 
+        y_hat_output_M_100 = zeros(length(pt_table_M.y),100);
+        corr_output_M_100 = zeros(2, 100);
+        randinds_output_M_100 = zeros(length(pt_table_M.y),100);
+        pmask_output_M_100 = zeros(35778,5,100);
+        for i = 1:100
+            [y_hat_output_M,corr_output_M,randinds_output_M,pmask_output_M] = cpm_main(conn_mat_struct_M(st).conn_mat,pt_table_M.y','pthresh',0.01,'kfolds',5);
+            y_hat_output_M_100(:,i) = y_hat_output_M;
+            corr_output_M_100(1,i) =  corr_output_M(1);
+            corr_output_M_100(2,i) =  corr_output_M(2);
+            randinds_output_M_100(:,i) = randinds_output_M';
+            pmask_output_M_100(:,:,i) = pmask_output_M;
+        end
+        
+        y_hat_struct_M(st) = struct('scan_type',scan_type_list(st),'y_hat',y_hat_output_M_100);
+        corr_struct_M(st) = struct('scan_type',scan_type_list(st),'corr',corr_output_M_100);
+        randinds_struct_M(st) = struct('scan_type',scan_type_list(st),'randinds',randinds_output_M_100);
+        pmask_struct_M(st) = struct('scan_type',scan_type_list(st),'pmask',pmask_output_M_100);
     end
-    cpm_output_by_sex(2) = struct('y_hat_struct',y_hat_struct,'corr_struct',corr_struct,'randinds_struct',randinds_struct, 'pmask_struct',pmask_struct);
+    cpm_output_by_sex(2) = struct('y_hat_struct',y_hat_struct_M,'corr_struct',corr_struct_M,'randinds_struct',randinds_struct_M, 'pmask_struct',pmask_struct_M);
     
     %% COLLECT PT INFO, CPM OUTPUTS, AND ALL CONNECTIVITY MATRICES!
     if strcmp(param_list{param},'ravlt')

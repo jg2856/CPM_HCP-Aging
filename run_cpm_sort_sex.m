@@ -115,41 +115,13 @@ for param = 1:length(param_list)
         end
         
     end
+    
+    conn_mat_struct_by_sex = struct('F_conn_mats', conn_mat_struct_F, 'M_conn_mats', conn_mat_struct_M);
 
     %% CODE TO RUN CPM!!! ***
     
     %% CPM_OUTPUT STRUCT SETUP
-    % initialize structs with all cpm outputs(y_hat and corr) for each 
-    %   scan type (y_hat_struct and corr_struct)
-    
-%     i = 1; % i = 1: female, i = 2: male
-%     for c = [conn_mat_struct_F,conn_mat_struct_M]
-%         for st = 1:length(scan_type_list)
-%             cd(CPM_HCP_Aging_path)
-%             %% run cpm here!!
-%             if i == 1
-%                 size(c(st).conn_mat)
-%                 size(pt_table_F.y')
-%                 [y_hat_output,corr_output,randinds_output,pmask_output] = cpm_main(c(st).conn_mat,pt_table_F.y','pthresh',0.01,'kfolds',5);
-%             end
-%             if i == 2
-%                 size(c(st).conn_mat)
-%                 size(pt_table_M.y')
-%                 [y_hat_output,corr_output,randinds_output,pmask_output] = cpm_main(c(st).conn_mat,pt_table_M.y','pthresh',0.01,'kfolds',5);
-%             end
-% 
-%             y_hat_struct(st) = struct('scan_type',scan_type_list(st),'y_hat',y_hat_output);
-%             corr_struct(st) = struct('scan_type',scan_type_list(st),'corr',corr_output);
-%             randinds_struct(st) = struct('scan_type',scan_type_list(st),'randinds',randinds_output);
-%             pmask_struct(st) = struct('scan_type',scan_type_list(st),'pmask',pmask_output);
-%         end
-%     
-%     % create cpm_output struct to hold both y_hat_struct and corr_struct
-%     cpm_output(i) = struct('y_hat_struct',y_hat_struct,'corr_struct',corr_struct,'randinds_struct',randinds_struct, 'pmask_struct',pmask_struct);
-%         i = i+1;
-%     end
-    
-    %% create cpm_output struct to hold both y_hat_struct and corr_struct
+    % create cpm_output struct to hold both y_hat_struct and corr_struct
     for st = 1:length(scan_type_list)
         cd(CPM_HCP_Aging_path)
 
@@ -178,15 +150,13 @@ for param = 1:length(param_list)
     end
     cpm_output_by_sex(2) = struct('y_hat_struct',y_hat_struct,'corr_struct',corr_struct,'randinds_struct',randinds_struct, 'pmask_struct',pmask_struct);
     
-    %% set pt array and param_data array to correct subj list/param scores, depending on input params
+    %% COLLECT PT INFO, CPM OUTPUTS, AND ALL CONNECTIVITY MATRICES!
     if strcmp(param_list{param},'ravlt')
-        save('pt_struct_ravlt_by_sex.mat', 'pt_struct_by_sex')
-        save('cpm_output_ravlt_by_sex.mat', 'cpm_output_by_sex')
+        save('ravlt_by_sex.mat', 'pt_struct_by_sex', 'cpm_output_by_sex', 'conn_mat_struct_by_sex','-v7.3')
         disp('RAVLT results saved!')
     end
     if strcmp(param_list{param},'neon')
-        save('pt_struct_neon_by_sex.mat', 'pt_struct_by_sex')
-        save('cpm_output_neon_by_sex.mat', 'cpm_output_by_sex')
+        save('neon_by_sex.mat', 'pt_struct_by_sex', 'cpm_output_by_sex', 'conn_mat_struct_by_sex','-v7.3')
         disp('NEO-N results saved!')
     end
 end

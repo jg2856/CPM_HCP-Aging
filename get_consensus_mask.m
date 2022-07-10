@@ -9,17 +9,15 @@
 %       i.e., "{'ravlt','neon'}"
 
 % outputs:
-%   'MxM_matrix_pos'
-%   'MxM_matrix_neg'
-%   'size_of_pos_mask'
-%   'size_of_neg_mask'
+%   `MxM_matrix_pos`
+%   `MxM_matrix_neg`
+%   `size_of_pos_mask`
+%   `size_of_neg_mask`
 
 %% Implementation
 function [MxM_matrix_pos,MxM_matrix_neg,size_of_pos_mask,size_of_neg_mask] = get_consensus_mask(pmask_stock,k_folds,trial_count,thresholder_to_use)
-% function pmask = get_consensus_mask(pmask_stock,k_folds,trial_count,thresholder_to_use)
 
 %% condense pmask_stock (across all folds and all trials)
-
 % average pmask values across all folds (add up pmask values, then divide by k_folds number)
 pmask_fold = (sum(pmask_stock, 2))/k_folds;
 
@@ -45,7 +43,7 @@ find(pmask_neg ==1);
 %% use thresholder on pmasks and calculate number of selected edges in pos/neg mats
 thresholder = thresholder_to_use;
 
-%now am able to sum ***still need to figure out this math myself...
+%now am able to sum ***still need to figure out this math myself...***
 sum_pos = sum(pmask_pos,2);
 sum_neg = sum(pmask_neg,2);
 
@@ -71,7 +69,6 @@ upp_id = find(aa_upp);
 upp_len = length(upp_id);
 
 %back in matrix format
-% edge_vector_matrix_combined = zeros(no_node, no_node);
 edge_vector_matrix_pos = zeros(no_node, no_node);
 edge_vector_matrix_neg = zeros(no_node, no_node);
 

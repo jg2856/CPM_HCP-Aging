@@ -7,8 +7,7 @@
 % inputs: none
 
 % outputs:
-%   saves .csv files of positive and negative matrices for each scan type
-%   of each parameter in `param_list` (for later use in BIS Connviewer)
+%   saves .csv files of 
 
 %% Implementation
 

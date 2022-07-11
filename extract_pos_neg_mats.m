@@ -56,8 +56,10 @@ for n = 1:2
         csv_pos_filename = sprintf('/Users/sj737/Library/CloudStorage/OneDrive-YaleUniversity/Fredericks_Lab_files/CPM_HCP-A/cpm_figures/pos_neg_mats/%s_%s_pos_mat.csv', param, scan_type);
         csv_neg_filename = sprintf('/Users/sj737/Library/CloudStorage/OneDrive-YaleUniversity/Fredericks_Lab_files/CPM_HCP-A/cpm_figures/pos_neg_mats/%s_%s_neg_mat.csv', param, scan_type);
 
-        csvwrite(csv_pos_filename,pos_mat)
-        csvwrite(csv_neg_filename,neg_mat)
+%         csvwrite(csv_pos_filename,pos_mat)
+%         csvwrite(csv_neg_filename,neg_mat)
+        
+        pmask_visualization(pos_mat,neg_mat)
     end
 
 end

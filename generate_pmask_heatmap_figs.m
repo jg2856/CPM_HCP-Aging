@@ -2,12 +2,13 @@
 
 %% general script info
 
-% fxn to get positive and negative matrices of significant edges from cpm
+% fxn to visualize pmasks of significant edges from cpm
 
 % inputs: none
 
 % outputs:
-%   saves .csv files of 
+%   saves 10-network consensus heatmaps of positive and negative matrices for each scan type
+%   of each parameter in `param_list` (for later use in BIS Connviewer)
 
 %% Implementation
 
@@ -50,13 +51,7 @@ for n = 1:2
         %% get positive and negative pmasks and their sizes
         [pos_mat,neg_mat,pos_mat_size,neg_mat_size] = get_consensus_mask(cpm_output.pmask_struct.(scan_type),k_folds,trial_count,thresholder);
 
-        % other stuff to update
-
-        csv_pos_filename = sprintf('/Users/sj737/Library/CloudStorage/OneDrive-YaleUniversity/Fredericks_Lab_files/CPM_HCP-A/cpm_figures/pos_neg_mats/%s_%s_pos_mat.csv', param, scan_type);
-        csv_neg_filename = sprintf('/Users/sj737/Library/CloudStorage/OneDrive-YaleUniversity/Fredericks_Lab_files/CPM_HCP-A/cpm_figures/pos_neg_mats/%s_%s_neg_mat.csv', param, scan_type);
-
-        csvwrite(csv_pos_filename,pos_mat)
-        csvwrite(csv_neg_filename,neg_mat)
+        pmask_visualization(pos_mat,neg_mat, param, scan_type)
     end
 
 end

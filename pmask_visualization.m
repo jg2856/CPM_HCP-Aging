@@ -11,7 +11,7 @@
 %   
 
 %% Implementation
-function pmask_visualization(pos_mat,neg_mat)
+function pmask_visualization(pos_mat,neg_mat,param_name,scan_type_name)
 
 close all
 
@@ -51,10 +51,7 @@ end
 % size(new_assignments_final_matr_tmp)
 % size(new_assignments_final_matr_cell)
 
-
-%%
-
-%this is finding the number of sig edges across the entire 10x10 network
+%% this is finding the number of sig edges across the entire 10x10 network
 
 
 for w = 1:length(new_assignments_final_matr_cell);
@@ -113,10 +110,10 @@ for w = 1:length(new_assignments_final_matr_cell);
 end
 
 
-% %% note that these figures are for quick visualization only. they should be
-% %tinkered  with or a different script should be used for
-% %publication/presentation purposes.
-% 
+%% note that these figures are for quick visualization only. they should be
+%tinkered  with or a different script should be used for
+%publication/presentation purposes.
+
 % %mat_1 --> plotting the number of edges in a network without normalizing by
 % %network size.
 % figure;
@@ -131,7 +128,7 @@ end
 % title('neg mask')
 % 
 % % raw_edge_fig_filename = sprintf('/Users/sj737/Library/CloudStorage/OneDrive-YaleUniversity/Fredericks_Lab_files/CPM_HCP-A/CPM_HCP-Aging/figs_and_csvmats/p%.2f_k%d/%s/consensus_mask_figs/pos_neg_mask_network_representation_raw_edges_%s_%s_p%.2f_k%d.png', p_thresh, k_folds, param, scan_type, param, p_thresh, k_folds);
-% raw_edge_fig_filename = sprintf('/Users/sj737/Library/CloudStorage/OneDrive-YaleUniversity/Fredericks_Lab_files/CPM_HCP-A/CPM_HCP-Aging/figs_and_csvmats/p%.3f_k%d/%s/consensus_mask_figs/pos_neg_mask_network_representation_raw_edges_%s_%s_p%.3f_k%d.png', p_thresh, k_folds, param, scan_type, param, p_thresh, k_folds);
+% % raw_edge_fig_filename = sprintf('/Users/sj737/Library/CloudStorage/OneDrive-YaleUniversity/Fredericks_Lab_files/CPM_HCP-A/CPM_HCP-Aging/figs_and_csvmats/p%.3f_k%d/%s/consensus_mask_figs/pos_neg_mask_network_representation_raw_edges_%s_%s_p%.3f_k%d.png', p_thresh, k_folds, param, scan_type, param, p_thresh, k_folds);
 % % saveas(gcf,raw_edge_fig_filename)
 % 
 % 
@@ -150,99 +147,99 @@ end
 % title('neg mask')
 % 
 % % norm_edge_fig_filename = sprintf('/Users/sj737/Library/CloudStorage/OneDrive-YaleUniversity/Fredericks_Lab_files/CPM_HCP-A/CPM_HCP-Aging/figs_and_csvmats/p%.2f_k%d/%s/consensus_mask_figs/pos_neg_mask_network_representation_raw_edges_normalized_%s_%s_p%.2f_k%d.png', p_thresh, k_folds, param, scan_type, param, p_thresh, k_folds);
-% norm_edge_fig_filename = sprintf('/Users/sj737/Library/CloudStorage/OneDrive-YaleUniversity/Fredericks_Lab_files/CPM_HCP-A/CPM_HCP-Aging/figs_and_csvmats/p%.3f_k%d/%s/consensus_mask_figs/pos_neg_mask_network_representation_raw_edges_normalized_%s_%s_p%.3f_k%d.png', p_thresh, k_folds, param, scan_type, param, p_thresh, k_folds);
+% % norm_edge_fig_filename = sprintf('/Users/sj737/Library/CloudStorage/OneDrive-YaleUniversity/Fredericks_Lab_files/CPM_HCP-A/CPM_HCP-Aging/figs_and_csvmats/p%.3f_k%d/%s/consensus_mask_figs/pos_neg_mask_network_representation_raw_edges_normalized_%s_%s_p%.3f_k%d.png', p_thresh, k_folds, param, scan_type, param, p_thresh, k_folds);
 % % saveas(gcf,norm_edge_fig_filename)
-% 
-% %% mat_1_1
-% % %saving results to current directory.
-% % filename = 'visualizing_CPM_results.mat';
-% % save(filename)
-% 
-% SLIM_DP_edges = mat_2{1,1};
-% 
-% SLIM_DP_edges(:,end+1) = 0; % pad with zeros for pcolor
-% SLIM_DP_edges(end+1,:) = 0;
-% 
-% %finding the max value of each matrix so I can use it to scale the color
-% %bar below.
-% 
+
+
+%%  plotting pos/neg mats of mat_2 (lower triangle of edges normalized by network size)
+%% mat_2_1
+% %saving results to current directory.
+% filename = 'visualizing_CPM_results.mat';
+% save(filename)
+
+SLIM_DP_edges = mat_2{1,1};
+
+SLIM_DP_edges(:,end+1) = 0; % pad with zeros for pcolor
+SLIM_DP_edges(end+1,:) = 0;
+
+%finding the max value of each matrix so I can use it to scale the color
+%bar below.
+
 % tmp_max = max(SLIM_DP_edges);
 % max_SLIM = max(tmp_max);
-% 
-% %I'm putting the max value I obtained from directly above in the zero spaces
-% %of the upper triangle in my matrix -- I am doing this because they are
-% %currently filled with zeros, which results in that square becoming black
-% %in my final figure with the current colormap. 
-% 
-% filler_upper_triangle_SLIM = ones(10,10)*max_SLIM;
-% filler_upper_triangle_SLIM = triu(filler_upper_triangle_SLIM,1);
-% 
-% filler_upper_triangle_SLIM =[filler_upper_triangle_SLIM zeros(10,1)]; %here I am adding zeros so I can add filler_upper_triangle_SLIM to my matrices below.
-% filler_upper_triangle_SLIM = vertcat(filler_upper_triangle_SLIM, zeros(1,11)); 
-% 
-% %putting them together
-% final_SLIM = SLIM_DP_edges + filler_upper_triangle_SLIM;
-% 
-% % Plot and format figure
-% %% corey version color scheme
-% figure;
-% pcolor(final_SLIM)
-% caxis([0 max_SLIM]) %color bar will be scaled from 0 to the max value in the matrix.
-% axis('square')
-% set(gca,'YDir','reverse','XTick',[],'YTick',[]);
-% set(gcf,'color','w');
-% colormap hot
-% colorbar
-% title('SLIM')
-% 
-% % % pos_mat_vis_fig_filename = sprintf('/Users/sj737/Library/CloudStorage/OneDrive-YaleUniversity/Fredericks_Lab_files/CPM_HCP-A/CPM_HCP-Aging/figs_and_csvmats/p%.2f_k%d/%s/consensus_mask_figs/matrix_visualization_mat_2_1_%s_%s_p%.2f_k%d.jpg', p_thresh, k_folds, param, scan_type, param, p_thresh, k_folds);
-% pos_mat_vis_fig_filename = sprintf('/Users/sj737/Library/CloudStorage/OneDrive-YaleUniversity/Fredericks_Lab_files/CPM_HCP-A/CPM_HCP-Aging/figs_and_csvmats/p%.3f_k%d/%s/consensus_mask_figs/matrix_visualization_mat_2_1_%s_%s_p%.3f_k%d.jpg', p_thresh, k_folds, param, scan_type, param, p_thresh, k_folds);
-% % saveas(gcf,pos_mat_vis_fig_filename)
-% 
-% %% mat_1_2
-% SLIM_DP_edges = mat_2{1,2};
-% 
-% SLIM_DP_edges(:,end+1) = 0; % pad with zeros for pcolor
-% SLIM_DP_edges(end+1,:) = 0;
-% 
-% %finding the max value of each matrix so I can use it to scale the color
-% %bar below.
-% 
+max_SLIM = 0;
+
+%I'm putting the max value I obtained from directly above in the zero spaces
+%of the upper triangle in my matrix -- I am doing this because they are
+%currently filled with zeros, which results in that square becoming black
+%in my final figure with the current colormap. 
+
+filler_upper_triangle_SLIM = ones(10,10)*max_SLIM;
+filler_upper_triangle_SLIM = triu(filler_upper_triangle_SLIM,1);
+
+filler_upper_triangle_SLIM =[filler_upper_triangle_SLIM zeros(10,1)]; %here I am adding zeros so I can add filler_upper_triangle_SLIM to my matrices below.
+filler_upper_triangle_SLIM = vertcat(filler_upper_triangle_SLIM, zeros(1,11)); 
+
+%putting them together
+final_SLIM = SLIM_DP_edges + filler_upper_triangle_SLIM;
+
+% Plot and format figure
+figure;
+pcolor(final_SLIM);
+caxis([0 max_SLIM]); %color bar will be scaled from 0 to the max value in the matrix.
+axis('square');
+set(gca,'YDir','reverse','XTickLabel',{'MF','FP','DMN','Mot','VI','VII','VAs','SAL','SC','CBL'},'YTickLabel',{'MF','FP','DMN','Mot','VI','VII','VAs','SAL','SC','CBL'},'Xtick',1.5 : 1 : 10.5,'Ytick',1.5 : 1 : 10.5);
+set(gcf,'color','w');
+colormap hot
+colorbar
+title(sprintf("%s - %s 10-network positive-edge heatmap", param_name, scan_type_name), 'Interpreter', 'none');
+
+pos_mat_vis_fig_filename = sprintf('/Users/sj737/Library/CloudStorage/OneDrive-YaleUniversity/Fredericks_Lab_files/CPM_HCP-A/cpm_figures/ten_network_heatmaps/%s_%s_pos_mat_heatmap.png', param_name, scan_type_name);
+saveas(gcf,pos_mat_vis_fig_filename)
+
+%% mat_2_2
+SLIM_DP_edges = mat_2{1,2};
+
+SLIM_DP_edges(:,end+1) = 0; % pad with zeros for pcolor
+SLIM_DP_edges(end+1,:) = 0;
+
+%finding the max value of each matrix so I can use it to scale the color
+%bar below.
+
 % tmp_max = max(SLIM_DP_edges);
 % max_SLIM = max(tmp_max);
-% 
-% %I'm putting the max value I obtained from directly above in the zero spaces
-% %of the upper triangle in my matrix -- I am doing this because they are
-% %currently filled with zeros, which results in that square becoming black
-% %in my final figure with the current colormap. 
-% 
-% filler_upper_triangle_SLIM = ones(10,10)*max_SLIM;
-% filler_upper_triangle_SLIM = triu(filler_upper_triangle_SLIM,1);
-% 
-% filler_upper_triangle_SLIM =[filler_upper_triangle_SLIM zeros(10,1)]; %here I am adding zeros so I can add filler_upper_triangle_SLIM to my matrices below.
-% filler_upper_triangle_SLIM = vertcat(filler_upper_triangle_SLIM, zeros(1,11)); 
-% 
-% %putting them together
-% final_SLIM = SLIM_DP_edges + filler_upper_triangle_SLIM;
-% 
-% % Plot and format figure
-% %% corey version color scheme
-% figure;
-% pcolor(final_SLIM)
-% caxis([0 max_SLIM]) %color bar will be scaled from 0 to the max value in the matrix.
-% axis('square')
-% set(gca,'YDir','reverse','XTick',[],'YTick',[]);
-% set(gcf,'color','w');
-% colormap hot
-% colorbar
-% title('SLIM')
-% 
-% % % neg_mat_vis_fig_filename = sprintf('/Users/sj737/Library/CloudStorage/OneDrive-YaleUniversity/Fredericks_Lab_files/CPM_HCP-A/CPM_HCP-Aging/figs_and_csvmats/p%.2f_k%d/%s/consensus_mask_figs/matrix_visualization_mat_2_2_%s_%s_p%.2f_k%d.jpg', p_thresh, k_folds, param, scan_type, param, p_thresh, k_folds);
-% neg_mat_vis_fig_filename = sprintf('/Users/sj737/Library/CloudStorage/OneDrive-YaleUniversity/Fredericks_Lab_files/CPM_HCP-A/CPM_HCP-Aging/figs_and_csvmats/p%.3f_k%d/%s/consensus_mask_figs/matrix_visualization_mat_2_2_%s_%s_p%.3f_k%d.jpg', p_thresh, k_folds, param, scan_type, param, p_thresh, k_folds);
-% % saveas(gcf,neg_mat_vis_fig_filename)
-% 
-% filename = 'matrix_visualization_for_publication_mat_1_1_su-run.mat';
-% % save(filename)
+max_SLIM = 0;
+
+%I'm putting the max value I obtained from directly above in the zero spaces
+%of the upper triangle in my matrix -- I am doing this because they are
+%currently filled with zeros, which results in that square becoming black
+%in my final figure with the current colormap. 
+
+filler_upper_triangle_SLIM = ones(10,10)*max_SLIM;
+filler_upper_triangle_SLIM = triu(filler_upper_triangle_SLIM,1);
+
+filler_upper_triangle_SLIM =[filler_upper_triangle_SLIM zeros(10,1)]; %here I am adding zeros so I can add filler_upper_triangle_SLIM to my matrices below.
+filler_upper_triangle_SLIM = vertcat(filler_upper_triangle_SLIM, zeros(1,11)); 
+
+%putting them together
+final_SLIM = SLIM_DP_edges + filler_upper_triangle_SLIM;
+
+% Plot and format figure
+figure;
+pcolor(final_SLIM);
+caxis([0 max_SLIM]); %color bar will be scaled from 0 to the max value in the matrix.
+axis('square');
+set(gca,'YDir','reverse','XTickLabel',{'MF','FP','DMN','Mot','VI','VII','VAs','SAL','SC','CBL'},'YTickLabel',{'MF','FP','DMN','Mot','VI','VII','VAs','SAL','SC','CBL'},'Xtick',1.5 : 1 : 10.5,'Ytick',1.5 : 1 : 10.5);
+set(gcf,'color','w');
+colormap hot
+colorbar
+title(sprintf("%s - %s 10-network negative-edge heatmap", param_name, scan_type_name), 'Interpreter', 'none');
+
+neg_mat_vis_fig_filename = sprintf('/Users/sj737/Library/CloudStorage/OneDrive-YaleUniversity/Fredericks_Lab_files/CPM_HCP-A/cpm_figures/ten_network_heatmaps/%s_%s_neg_mat_heatmap.png', param_name, scan_type_name);
+saveas(gcf,neg_mat_vis_fig_filename)
+
+filename = 'matrix_visualization_for_publication_mat_1_1_su-run.mat';
+% save(filename)
 
 clear all
 

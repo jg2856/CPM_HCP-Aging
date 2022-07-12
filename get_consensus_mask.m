@@ -40,26 +40,8 @@ pmask_neg(pmask_neg==1) = 0;
 find(pmask_pos ==-1);
 find(pmask_neg ==1);
 
-%% use thresholder on pmasks and calculate number of selected edges in pos/neg mats
+%% use thresholder (degree) on pmasks and calculate number of selected edges in pos/neg mats
 thresholder = thresholder_to_use;
-
-%now am able to sum ***still need to figure out this math myself...***
-sum_pos = sum(pmask_pos,2);
-sum_neg = sum(pmask_neg,2);
-
-sum_pos(sum_pos < ( size(pmask,2)* thresholder)) = 0;
-sum_neg(sum_neg > ( size(pmask,2)* thresholder)) = 0;
-
-% sum_pos_tmp(:,k) = +(sum_pos ~= 0);
-% sum_neg_tmp(:,k) = +(sum_neg ~= 0);
-
-sum_pos = +(sum_pos ~= 0);
-sum_neg = +(sum_neg ~= 0);
-
-%these are the sizes of edges that show up in every cross iteration loop
-size_of_pos_mask = length(find(sum_pos));
-size_of_neg_mask = length(find(sum_neg));
-
 
 %% triangularization of pos_mat/neg_mat vectors
 no_node = 268;
@@ -72,15 +54,58 @@ upp_len = length(upp_id);
 edge_vector_matrix_pos = zeros(no_node, no_node);
 edge_vector_matrix_neg = zeros(no_node, no_node);
 
-%now need to put idx_pos into 35,778 vector
-edge_vector_matrix_pos(upp_id) = sum_pos;
+size_of_pos_mask = length(find(pmask_pos));
+%disp(size_of_pos_mask);
+size_of_neg_mask = length(find(pmask_neg));
+%disp(size_of_neg_mask);
+
+%now need to put idx_pos into 35,778 vector - makes the 268x268 pmask
+%without removing any node data (will do this later with thresholding)
+edge_vector_matrix_pos(upp_id) = pmask_pos;
 edge_vector_matrix_pos = edge_vector_matrix_pos + edge_vector_matrix_pos';
 MxM_matrix_pos = edge_vector_matrix_pos;
 
-edge_vector_matrix_neg(upp_id) = sum_neg;
+edge_vector_matrix_neg(upp_id) = pmask_neg;
 edge_vector_matrix_neg = edge_vector_matrix_neg + edge_vector_matrix_neg';
 MxM_matrix_neg = edge_vector_matrix_neg;
-clear sum_pos sum_neg
+clear pmask_pos pmask_neg
+
+
+%% Accounting for extra thresholding - currently degree of node
+% If node has less than thresholder connections in brain then don't count
+% and turn row for that node to 0 (not also column b/c that affects other
+% nodes, only considering that node - let Jordan know if that's confusing)
+
+if thresholder ~= 0
+    countPos = no_node;
+    countNeg = no_node;
+    for i=1:no_node
+        if (sum(MxM_matrix_pos(i,:))< thresholder)
+            MxM_matrix_pos(i,:) = 0;
+            countPos = countPos - 1;
+        end    
+        if (abs(sum(MxM_matrix_neg(i,:)))< thresholder)
+            MxM_matrix_neg(i,:) = 0;
+            countNeg = countNeg - 1;
+        end 
+    end
+    disp(countPos);
+    disp(countNeg);
+    size_of_pos_mask = countPos;
+    size_of_neg_mask = countNeg;
+end    
 
 end
 
+
+
+
+% % sum_pos_tmp(:,k) = +(sum_pos ~= 0);
+% % sum_neg_tmp(:,k) = +(sum_neg ~= 0);
+% 
+% sum_pos = +(sum_pos ~= 0);
+% sum_neg = +(sum_neg ~= 0);
+% 
+% %these are the sizes of edges that show up in every cross iteration loop
+% size_of_pos_mask = length(find(sum_pos));
+% size_of_neg_mask = length(find(sum_neg));

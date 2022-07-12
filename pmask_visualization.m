@@ -190,11 +190,11 @@ caxis([0 max_SLIM]); %color bar will be scaled from 0 to the max value in the ma
 axis('square');
 set(gca,'YDir','reverse','XTickLabel',{'MF','FP','DMN','Mot','VI','VII','VAs','SAL','SC','CBL'},'YTickLabel',{'MF','FP','DMN','Mot','VI','VII','VAs','SAL','SC','CBL'},'Xtick',1.5 : 1 : 10.5,'Ytick',1.5 : 1 : 10.5);
 set(gcf,'color','w');
-colormap hot
+colormap(brewermap(256,'reds'))
 colorbar
 title(sprintf("%s - %s 10-network positive-edge heatmap", param_name, scan_type_name), 'Interpreter', 'none');
 
-pos_mat_vis_fig_filename = sprintf('/Users/sj737/Library/CloudStorage/OneDrive-YaleUniversity/Fredericks_Lab_files/CPM_HCP-A/cpm_figures/ten_network_heatmaps/%s_%s_pos_mat_heatmap.png', param_name, scan_type_name);
+pos_mat_vis_fig_filename = sprintf('/Users/sj737/Library/CloudStorage/OneDrive-YaleUniversity/Fredericks_Lab_files/CPM_HCP-A/cpm_figures/ten_network_heatmaps/M/%s_%s_pos_mat_heatmap_by_sex_M.png', param_name, scan_type_name);
 saveas(gcf,pos_mat_vis_fig_filename)
 
 %% mat_2_2
@@ -231,11 +231,11 @@ caxis([0 max_SLIM]); %color bar will be scaled from 0 to the max value in the ma
 axis('square');
 set(gca,'YDir','reverse','XTickLabel',{'MF','FP','DMN','Mot','VI','VII','VAs','SAL','SC','CBL'},'YTickLabel',{'MF','FP','DMN','Mot','VI','VII','VAs','SAL','SC','CBL'},'Xtick',1.5 : 1 : 10.5,'Ytick',1.5 : 1 : 10.5);
 set(gcf,'color','w');
-colormap hot
+colormap(brewermap(256,'blues'))
 colorbar
 title(sprintf("%s - %s 10-network negative-edge heatmap", param_name, scan_type_name), 'Interpreter', 'none');
 
-neg_mat_vis_fig_filename = sprintf('/Users/sj737/Library/CloudStorage/OneDrive-YaleUniversity/Fredericks_Lab_files/CPM_HCP-A/cpm_figures/ten_network_heatmaps/%s_%s_neg_mat_heatmap.png', param_name, scan_type_name);
+neg_mat_vis_fig_filename = sprintf('/Users/sj737/Library/CloudStorage/OneDrive-YaleUniversity/Fredericks_Lab_files/CPM_HCP-A/cpm_figures/ten_network_heatmaps/M/%s_%s_neg_mat_heatmap_by_sex_M.png', param_name, scan_type_name);
 saveas(gcf,neg_mat_vis_fig_filename)
 
 filename = 'matrix_visualization_for_publication_mat_1_1_su-run.mat';

@@ -17,9 +17,9 @@ scan_type_list = {'rfMRI_REST1_AP', 'rfMRI_REST1_PA', 'rfMRI_REST2_AP', 'rfMRI_R
 
 for n = 1:2
     % ravlt allsubjs cpm outputs
-    load(sprintf('../BIG_data_from_CPM_HCP-Aging/%s_allsubjs_cpm_output.mat',char(param_list{n})),'cpm_output_allsubjs') % currently set to get ravlt cpm outputs
+    load(sprintf('../BIG_data_from_CPM_HCP-Aging/%s_by_sex_cpm_output.mat',char(param_list{n})),'cpm_output_by_sex') % currently set to get ravlt cpm outputs
 
-    cpm_output = cpm_output_allsubjs;
+    cpm_output = cpm_output_by_sex;
     p_thresh = 0.01;
     k_folds = 5;
     param = char(param_list{n});
@@ -49,17 +49,15 @@ for n = 1:2
         thresholder = 0;
 
         %% get positive and negative pmasks and their sizes
-        [pos_mat,neg_mat,pos_mat_size,neg_mat_size] = get_consensus_mask(cpm_output.pmask_struct.(scan_type),k_folds,trial_count,thresholder);
+        [pos_mat,neg_mat,pos_mat_size,neg_mat_size] = get_consensus_mask(cpm_output.M.pmask_struct.(scan_type),k_folds,trial_count,thresholder);
 
         % other stuff to update
 
-        csv_pos_filename = sprintf('/Users/sj737/Library/CloudStorage/OneDrive-YaleUniversity/Fredericks_Lab_files/CPM_HCP-A/cpm_figures/pos_neg_mats/%s_%s_pos_mat.csv', param, scan_type);
-        csv_neg_filename = sprintf('/Users/sj737/Library/CloudStorage/OneDrive-YaleUniversity/Fredericks_Lab_files/CPM_HCP-A/cpm_figures/pos_neg_mats/%s_%s_neg_mat.csv', param, scan_type);
+        csv_pos_filename = sprintf('/Users/sj737/Library/CloudStorage/OneDrive-YaleUniversity/Fredericks_Lab_files/CPM_HCP-A/cpm_figures/pos_neg_mats/M/%s_%s_pos_mat_by_sex_M.csv', param, scan_type);
+        csv_neg_filename = sprintf('/Users/sj737/Library/CloudStorage/OneDrive-YaleUniversity/Fredericks_Lab_files/CPM_HCP-A/cpm_figures/pos_neg_mats/M/%s_%s_neg_mat_by_sex_M.csv', param, scan_type);
 
-%         csvwrite(csv_pos_filename,pos_mat)
-%         csvwrite(csv_neg_filename,neg_mat)
-        
-        pmask_visualization(pos_mat,neg_mat)
+        csvwrite(csv_pos_filename,pos_mat)
+        csvwrite(csv_neg_filename,neg_mat)
     end
 
 end
